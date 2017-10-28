@@ -19,7 +19,7 @@ object Jwt extends JwtHeaderJsonProtocol {
     * @return encoded JWT
     */
   def encode(payload: String, secret: String, algorithm: HashingAlgorithm): String = {
-    encode(JwtHeader(algorithm), payload)
+    encode(JwtHeader(algorithm), payload, algorithm, secret)
   }
 
   /**
@@ -34,10 +34,16 @@ object Jwt extends JwtHeaderJsonProtocol {
     encode(payload.toString, secret, algorithm)
   }
 
-  private def encode(header: JwtHeader, payload: String): String = {
+  private def encode(header: JwtHeader, payload: String, algorithm: HashingAlgorithm, secret: String): String = {
     val encodedHeader = Base64Encoder.encode(header.toJson.toString)
     val encodedPayload = Base64Encoder.encode(payload)
-    s"$encodedHeader.$encodedPayload"
+
+    val encodedData = s"$encodedHeader.$encodedPayload"
+
+    val signature = algorithm.sign(encodedData, secret)
+    val encodedSignature = Base64Encoder.encode(signature)
+
+    s"$encodedData.$encodedSignature"
   }
 
 }

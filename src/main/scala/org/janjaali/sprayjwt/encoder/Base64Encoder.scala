@@ -16,7 +16,18 @@ object Base64Encoder {
     * @return Base64 encoded String
     */
   def encode(text: String): String = {
-    base64Encoder.encodeToString(text.toString.getBytes)
+    val textAsByteArray = ByteEncoder.getBytes(text)
+    encode(textAsByteArray)
+  }
+
+  /**
+    * Encodes Byte-Array as String.
+    *
+    * @param byteArray to encode
+    * @return String encoded Byte-Array
+    */
+  def encode(byteArray: Array[Byte]): String = {
+    base64Encoder.encodeToString(byteArray)
   }
 
 }

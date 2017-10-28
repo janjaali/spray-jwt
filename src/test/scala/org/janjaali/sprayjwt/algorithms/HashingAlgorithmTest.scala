@@ -1,5 +1,7 @@
 package org.janjaali.sprayjwt.algorithms
 
+import javax.crypto.Mac
+
 import org.scalatest.FunSpec
 
 class HashingAlgorithmTest extends FunSpec {
