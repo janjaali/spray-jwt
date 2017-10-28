@@ -27,7 +27,7 @@ object Base64Encoder {
     * @return String encoded Byte-Array
     */
   def encode(byteArray: Array[Byte]): String = {
-    base64Encoder.encodeToString(byteArray)
+    base64Encoder.encodeToString(byteArray).replaceAll("=", "")
   }
 
 }

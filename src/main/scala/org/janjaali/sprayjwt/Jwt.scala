@@ -41,9 +41,7 @@ object Jwt extends JwtHeaderJsonProtocol {
     val encodedData = s"$encodedHeader.$encodedPayload"
 
     val signature = algorithm.sign(encodedData, secret)
-    val encodedSignature = Base64Encoder.encode(signature)
-
-    s"$encodedData.$encodedSignature"
+    s"$encodedData.$signature"
   }
 
 }

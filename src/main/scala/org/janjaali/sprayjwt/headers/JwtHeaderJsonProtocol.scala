@@ -14,8 +14,8 @@ trait JwtHeaderJsonProtocol extends DefaultJsonProtocol {
   implicit object JwtHeaderJsonFormat extends RootJsonFormat[JwtHeader] {
     override def write(jwtHeader: JwtHeader): JsValue = {
       JsObject(
-        "typ" -> JsString(jwtHeader.typ),
-        "alg" -> JsString(jwtHeader.algorithm.name)
+        "alg" -> JsString(jwtHeader.algorithm.name),
+        "typ" -> JsString(jwtHeader.typ)
       )
     }
 
