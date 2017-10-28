@@ -19,6 +19,13 @@ class HashingAlgorithmTest extends FunSpec {
           case _ => fail
         }
       }
+
+      it("maps HS512") {
+        HashingAlgorithm("HS512") match {
+          case Some(alg) => assert(alg == HS512)
+          case _ => fail
+        }
+      }
     }
   }
 

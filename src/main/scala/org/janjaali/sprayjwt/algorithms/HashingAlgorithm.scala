@@ -7,6 +7,7 @@ object HashingAlgorithm {
   def apply(name: String): Option[HashingAlgorithm] = name match {
     case "HS256" => Some(HS256)
     case "HS384" => Some(HS384)
+    case "HS512" => Some(HS512)
     case _ => None
   }
 }
