@@ -4,7 +4,7 @@ import org.janjaali.sprayjwt.algorithms.HS256
 import org.scalatest.FunSpec
 import spray.json._
 
-class JwtHeaderJsonProtocolTest extends FunSpec with JwtHeaderJsonProtocol {
+class JwtHeaderJsonProtocolTest extends FunSpec {
 
   describe("JwtHeaderJsonProtocol trait") {
     it("converts JWT-Header to JsValue") {

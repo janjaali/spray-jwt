@@ -2,13 +2,13 @@ package org.janjaali.sprayjwt
 
 import org.janjaali.sprayjwt.algorithms.HashingAlgorithm
 import org.janjaali.sprayjwt.encoder.Base64Encoder
-import org.janjaali.sprayjwt.headers.{JwtHeader, JwtHeaderJsonProtocol}
+import org.janjaali.sprayjwt.headers.{JwtHeader, JwtHeaderJsonWriter}
 import spray.json._
 
 /**
   * Represents a JWT Encoder/Decoder.
   */
-object Jwt extends JwtHeaderJsonProtocol {
+object Jwt {
 
   /**
     * Encodes payload as JWT.
