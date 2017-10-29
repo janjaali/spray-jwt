@@ -1,9 +1,11 @@
 package org.janjaali.sprayjwt.algorithms
 
-import java.security.spec.PKCS8EncodedKeySpec
-import java.security.{KeyFactory, PrivateKey, Signature}
+import java.io.{IOException, StringReader}
+import java.security.{PrivateKey, Signature}
 
-import org.janjaali.sprayjwt.encoder.{Base64Decoder, Base64Encoder, ByteEncoder}
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
+import org.bouncycastle.openssl.{PEMKeyPair, PEMParser}
+import org.janjaali.sprayjwt.encoder.{Base64Encoder, ByteEncoder}
 
 /**
   * Represents RsaAlgorithm.
@@ -29,22 +31,16 @@ abstract class RsaAlgorithm(override val name: String) extends HashingAlgorithm(
     Base64Encoder.encode(signatureByteArray)
   }
 
-  def parseRsaKey(secret: String): Array[Byte] = {
-    val pureSecret = secret.replaceAll("-----BEGIN (.*)-----", "")
-      .replaceAll("-----END (.*)-----", "")
-      .replaceAll("\r\n", "")
-      .replaceAll("\n", "")
-      .trim
+  private def getPrivateKey(str: String): PrivateKey = {
+    val pemParser = new PEMParser(new StringReader(str))
+    val keyPair = pemParser.readObject()
 
-    Base64Decoder.decode(pureSecret)
-  }
-
-  private def getPrivateKey(secret: String): PrivateKey = {
-    val key = parseRsaKey(secret)
-    val keySpec = new PKCS8EncodedKeySpec(key)
-
-    val keyFactory = KeyFactory.getInstance("RSA", provider)
-    keyFactory.generatePrivate(keySpec)
+    Option(keyPair) match {
+      case Some(keyPair: PEMKeyPair) =>
+        val converter = new JcaPEMKeyConverter
+        converter.getKeyPair(keyPair).getPrivate
+      case _ => throw new IOException(s"Invalid key for $cryptoAlgName")
+    }
   }
 
 }
