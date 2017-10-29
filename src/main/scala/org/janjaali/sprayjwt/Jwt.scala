@@ -1,5 +1,8 @@
 package org.janjaali.sprayjwt
 
+import java.security.Security
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.janjaali.sprayjwt.algorithms.HashingAlgorithm
 import org.janjaali.sprayjwt.encoder.Base64Encoder
 import org.janjaali.sprayjwt.headers.{JwtHeader, JwtHeaderJsonWriter}
@@ -9,6 +12,8 @@ import spray.json._
   * Represents a JWT Encoder/Decoder.
   */
 object Jwt {
+
+  addBouncyCastleProvider()
 
   /**
     * Encodes payload as JWT.
@@ -42,6 +47,12 @@ object Jwt {
 
     val signature = algorithm.sign(encodedData, secret)
     s"$encodedData.$signature"
+  }
+
+  private def addBouncyCastleProvider(): Unit = {
+    if (Security.getProvider("BC") == null) {
+      Security.addProvider(new BouncyCastleProvider)
+    }
   }
 
 }

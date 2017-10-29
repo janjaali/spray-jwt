@@ -9,7 +9,8 @@ val testDependencies = Seq(
 )
 
 val dependencies = Seq(
-  "io.spray" %%  "spray-json" % "1.3.3"
+  "io.spray" %%  "spray-json" % "1.3.3",
+  "org.bouncycastle" % "bcpkix-jdk15on" % "1.58"
 )
 
 libraryDependencies ++= dependencies
