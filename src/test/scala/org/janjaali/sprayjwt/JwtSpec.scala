@@ -75,16 +75,6 @@ class JwtSpec extends FunSpec {
         assert(jwt == expectedJwt)
       }
     }
-
-    describe("ES256") {
-      it("encodes as JWT") {
-        val source = scala.io.Source.fromURL(getClass.getResource("test.es.private.key"))
-        val secret = try source.mkString finally source.close
-
-        val payload = """{"sub":"1234567890","name":"John Doe","admin":true}"""
-        val jwt = Jwt.encode(payload, secret, ES256)
-      }
-    }
   }
 
 }
