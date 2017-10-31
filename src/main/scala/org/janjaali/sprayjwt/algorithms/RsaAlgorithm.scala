@@ -31,6 +31,8 @@ abstract class RsaAlgorithm(override val name: String) extends HashingAlgorithm(
     Base64Encoder.encode(signatureByteArray)
   }
 
+  override def validate(data: String, signature: String, secret: String): Boolean = ???
+
   private def getPrivateKey(str: String): PrivateKey = {
     val pemParser = new PEMParser(new StringReader(str))
     val keyPair = pemParser.readObject()

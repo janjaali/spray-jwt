@@ -26,4 +26,14 @@ abstract class HashingAlgorithm(val name: String) {
     * @return signed data
     */
   def sign(data: String, secret: String): String
+
+  /**
+    * Validates signature.
+    *
+    * @param data      to validate
+    * @param signature to validate
+    * @param secret    to use for validation
+    * @return <code>true</code> if signature is valid, otherwise returns <code>false</code>
+    */
+  def validate(data: String, signature: String, secret: String): Boolean
 }

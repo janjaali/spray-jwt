@@ -19,4 +19,14 @@ object Base64Decoder {
     base64Decoder.decode(text)
   }
 
+  /**
+    * Decodes Base64 decoded text as String.
+    *
+    * @param text to decode
+    * @return Base64 decoded String
+    */
+  def decodeAsString(text: String): String = {
+    new String(decode(text))
+  }
+
 }

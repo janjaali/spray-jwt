@@ -3,7 +3,7 @@ package org.janjaali.sprayjwt.algorithms
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
-import org.janjaali.sprayjwt.encoder.{Base64Encoder, ByteEncoder}
+import org.janjaali.sprayjwt.encoder.{Base64Decoder, Base64Encoder, ByteEncoder}
 
 /**
   * Represents HmacAlgorithm.
@@ -27,6 +27,10 @@ abstract class HmacAlgorithm(override val name: String) extends HashingAlgorithm
     mac.init(secretKey)
     val signAsByteArray = mac.doFinal(dataAsByteArray)
     Base64Encoder.encode(signAsByteArray)
+  }
+
+  override def validate(data: String, signature: String, secret: String): Boolean = {
+    sign(data, secret) == signature
   }
 
 }
