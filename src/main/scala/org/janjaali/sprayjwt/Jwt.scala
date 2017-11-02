@@ -26,8 +26,8 @@ object Jwt {
     * @param algorithm algorithm to use for encoding
     * @return encoded JWT
     */
-  def encode(payload: String, secret: String, algorithm: HashingAlgorithm): String = {
-    encode(JwtHeader(algorithm), payload, algorithm, secret)
+  def encode(payload: String, secret: String, algorithm: HashingAlgorithm): Try[String] = {
+    Try(encode(JwtHeader(algorithm), payload, algorithm, secret))
   }
 
   /**
@@ -38,7 +38,7 @@ object Jwt {
     * @param algorithm algorithm to use for encoding
     * @return encoded JWT
     */
-  def encode(payload: JsValue, secret: String, algorithm: HashingAlgorithm): String = {
+  def encode(payload: JsValue, secret: String, algorithm: HashingAlgorithm): Try[String] = {
     encode(payload.toString, secret, algorithm)
   }
 
