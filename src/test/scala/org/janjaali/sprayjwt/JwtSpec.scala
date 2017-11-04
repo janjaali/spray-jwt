@@ -2,6 +2,7 @@ package org.janjaali.sprayjwt
 
 import org.janjaali.sprayjwt.algorithms._
 import org.scalatest.FunSpec
+import spray.json.{JsBoolean, JsObject, JsString}
 
 class JwtSpec extends FunSpec {
 
@@ -17,12 +18,38 @@ class JwtSpec extends FunSpec {
         assert(jwt == expectedJwt)
       }
 
+      it("encodes JsValue as JWT") {
+        val payload = """{"sub":"1234567890","name":"John Doe","admin":true}"""
+        val jsValue = JsObject(
+          "sub" -> JsString("1234567890"),
+          "name" -> JsString("John Doe"),
+          "admin" -> JsBoolean(true)
+        )
+
+        val jwt = Jwt.encode(jsValue, secret, HS256).get
+
+        val expectedJwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ"
+        assert(jwt == expectedJwt)
+      }
+
       it("decodes JWT as String") {
         val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ"
         val decodedPayload = Jwt.decodeAsString(token, secret).get
 
-        val expected =  """{"sub":"1234567890","name":"John Doe","admin":true}"""
+        val expected = """{"sub":"1234567890","name":"John Doe","admin":true}"""
         assert(decodedPayload == expected)
+      }
+
+      it("decodes JWT as JsValue") {
+        val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ"
+        val json = Jwt.decode(token, secret).get
+
+        val expected = JsObject(
+          "sub" -> JsString("1234567890"),
+          "name" -> JsString("John Doe"),
+          "admin" -> JsBoolean(true)
+        )
+        assert(json == expected)
       }
     }
 
@@ -41,7 +68,7 @@ class JwtSpec extends FunSpec {
         val token = "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.DtVnCyiYCsCbg8gUP+579IC2GJ7P3CtFw6nfTTPw+0lZUzqgWAo9QIQElyxOpoRm"
         val decodedPayload = Jwt.decodeAsString(token, secret).get
 
-        val expected =  """{"sub":"1234567890","name":"John Doe","admin":true}"""
+        val expected = """{"sub":"1234567890","name":"John Doe","admin":true}"""
         assert(decodedPayload == expected)
       }
     }
@@ -62,7 +89,7 @@ class JwtSpec extends FunSpec {
         val token = "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.DtVnCyiYCsCbg8gUP+579IC2GJ7P3CtFw6nfTTPw+0lZUzqgWAo9QIQElyxOpoRm"
         val decodedPayload = Jwt.decodeAsString(token, secret).get
 
-        val expected =  """{"sub":"1234567890","name":"John Doe","admin":true}"""
+        val expected = """{"sub":"1234567890","name":"John Doe","admin":true}"""
         assert(decodedPayload == expected)
       }
     }

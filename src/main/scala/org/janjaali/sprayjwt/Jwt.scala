@@ -78,7 +78,9 @@ object Jwt {
     * @param secret to use for decoding
     * @return JsValue decoded JWT token
     */
-  def decode(token: String, secret: String): Try[JsValue] = ???
+  def decode(token: String, secret: String): Try[JsValue] = {
+    decodeAsString(token, secret).map(_.parseJson)
+  }
 
   private def getAlgorithmFromHeader(header: String): HashingAlgorithm = {
     val headerDecoded = Base64Decoder.decodeAsString(header)
