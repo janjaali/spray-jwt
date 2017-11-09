@@ -18,6 +18,14 @@ class JwtSpec extends FunSpec {
         assert(jwt == expectedJwt)
       }
 
+      it("encodes as JWT with iss") {
+        val payload = """{"sub":"1234567890","name":"John Doe","admin":true}"""
+        val jwt = Jwt.encode(payload, secret, HS256, JwtClaims(iss = Some("issuer"))).get
+
+        val expectedJwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlzcyI6Imlzc3VlciJ9.MabLKH7FNuQXlshZe6m054If8TLP5DvwYccl0ejlUVA"
+        assert(jwt == expectedJwt)
+      }
+
       it("encodes JsValue as JWT") {
         val payload = """{"sub":"1234567890","name":"John Doe","admin":true}"""
         val jsValue = JsObject(
@@ -29,6 +37,37 @@ class JwtSpec extends FunSpec {
         val jwt = Jwt.encode(jsValue, secret, HS256).get
 
         val expectedJwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ"
+        assert(jwt == expectedJwt)
+      }
+
+      it("encodes JsValue as JWT with iss") {
+        val payload = """{"sub":"1234567890","name":"John Doe","admin":true}"""
+        val jsValue = JsObject(
+          "sub" -> JsString("1234567890"),
+          "name" -> JsString("John Doe"),
+          "admin" -> JsBoolean(true)
+        )
+
+        val jwt = Jwt.encode(jsValue, secret, HS256, JwtClaims(iss = Some("issuer"))).get
+
+        val expectedJwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlzcyI6Imlzc3VlciJ9.MabLKH7FNuQXlshZe6m054If8TLP5DvwYccl0ejlUVA"
+        assert(jwt == expectedJwt)
+      }
+
+      it("encodes as JWT with all reserved claims") {
+        val payload = """{"sub":"1234567890","name":"John Doe","admin":true}"""
+        val jwt = Jwt.encode(payload, secret, HS256, JwtClaims(
+          iss = Some("issuer"),
+          sub = Some("subject"),
+          aud = Some(Set("audience")),
+          isa = Some(500),
+          exp = Some(1000),
+          nbf = Some(2000),
+          iat = Some(3000),
+          jti = Some("jwtId")
+        )).get
+
+        val expectedJwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjIwMDAsImFkbWluIjp0cnVlLCJuYW1lIjoiSm9obiBEb2UiLCJqdGkiOiJqd3RJZCIsImV4cCI6MTAwMCwiaXNhIjo1MDAsImlhdCI6MzAwMCwic3ViIjoic3ViamVjdCIsImF1ZCI6ImF1ZGllbmNlIiwiaXNzIjoiaXNzdWVyIn0.2zS7vqKCLPKOlre6LYMMR/dTp41Q9jV5KiEyE9I6JLw"
         assert(jwt == expectedJwt)
       }
 
@@ -48,6 +87,19 @@ class JwtSpec extends FunSpec {
           "sub" -> JsString("1234567890"),
           "name" -> JsString("John Doe"),
           "admin" -> JsBoolean(true)
+        )
+        assert(json == expected)
+      }
+
+      it("decodes JWT as JsValue with iss claim") {
+        val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlzcyI6Imlzc3VlciJ9.MabLKH7FNuQXlshZe6m054If8TLP5DvwYccl0ejlUVA"
+        val json = Jwt.decode(token, secret).get
+
+        val expected = JsObject(
+          "sub" -> JsString("1234567890"),
+          "name" -> JsString("John Doe"),
+          "admin" -> JsBoolean(true),
+          "iss" -> JsString("issuer")
         )
         assert(json == expected)
       }
@@ -84,7 +136,6 @@ class JwtSpec extends FunSpec {
         assert(jwt == expectedJwt)
       }
 
-
       it("decodes JWT as String") {
         val token = "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.DtVnCyiYCsCbg8gUP+579IC2GJ7P3CtFw6nfTTPw+0lZUzqgWAo9QIQElyxOpoRm"
         val decodedPayload = Jwt.decodeAsString(token, secret).get
@@ -117,7 +168,6 @@ class JwtSpec extends FunSpec {
         assert(decoded == expected)
       }
     }
-
 
     describe("RS384") {
       it("encodes as JWT") {

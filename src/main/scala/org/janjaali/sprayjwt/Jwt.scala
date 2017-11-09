@@ -27,7 +27,11 @@ object Jwt {
     * @return encoded JWT
     */
   def encode(payload: String, secret: String, algorithm: HashingAlgorithm): Try[String] = {
-    Try(encode(JwtHeader(algorithm), payload, algorithm, secret))
+    Try(encode(payload.parseJson, secret, algorithm, None))
+  }
+
+  def encode(payload: String, secret: String, algorithm: HashingAlgorithm, jwtClaims: JwtClaims): Try[String] = {
+    Try(encode(payload.parseJson, secret, algorithm, Some(jwtClaims)))
   }
 
   /**
@@ -39,7 +43,11 @@ object Jwt {
     * @return encoded JWT
     */
   def encode(payload: JsValue, secret: String, algorithm: HashingAlgorithm): Try[String] = {
-    encode(payload.toString, secret, algorithm)
+    Try(encode(payload, secret, algorithm, None))
+  }
+
+  def encode(payload: JsValue, secret: String, algorithm: HashingAlgorithm, jwtClaims: JwtClaims): Try[String] = {
+    Try(encode(payload, secret, algorithm, Some(jwtClaims)))
   }
 
   /**
@@ -88,9 +96,14 @@ object Jwt {
     jwtHeader.algorithm
   }
 
-  private def encode(header: JwtHeader, payload: String, algorithm: HashingAlgorithm, secret: String): String = {
-    val encodedHeader = Base64Encoder.encode(header.toJson.toString)
-    val encodedPayload = Base64Encoder.encode(payload)
+  private def encode(payload: JsValue, secret: String, algorithm: HashingAlgorithm, jwtClaims: Option[JwtClaims]): String = {
+    val fields = payload.asJsObject.fields
+    val reversedClaims = jwtClaims.map(getReversedClaims).getOrElse(Map.empty)
+
+    val payloadWithReservedClaims = JsObject(fields ++ reversedClaims)
+
+    val encodedHeader = getEncodedHeader(algorithm)
+    val encodedPayload = Base64Encoder.encode(payloadWithReservedClaims.toString)
 
     val encodedData = s"$encodedHeader.$encodedPayload"
 
@@ -102,6 +115,32 @@ object Jwt {
     if (Security.getProvider("BC") == null) {
       Security.addProvider(new BouncyCastleProvider)
     }
+  }
+
+  private def getEncodedHeader(algorithm: HashingAlgorithm): String = {
+    val header = JwtHeader(algorithm).toJson.toString
+    Base64Encoder.encode(header)
+  }
+
+  private def getReversedClaims(jwtClaims: JwtClaims): Map[String, JsValue] = {
+    Seq(
+      "iss" -> jwtClaims.iss,
+      "sub" -> jwtClaims.sub,
+      "aud" -> jwtClaims.aud,
+      "exp" -> jwtClaims.exp,
+      "nbf" -> jwtClaims.nbf,
+      "isa" -> jwtClaims.isa,
+      "iat" -> jwtClaims.iat,
+      "jti" -> jwtClaims.jti,
+    ).filter(_._2.nonEmpty)
+      .map {
+        case (name, Some(value: String)) => name -> JsString(value)
+        case (name, Some(values: Set[String])) => name -> (
+          if (values.size == 1) JsString(values.head) else JsArray(values.map(JsString(_)).toVector)
+        )
+        case (name, Some(value: Long)) => name -> JsNumber(value)
+      }
+      .toMap
   }
 
 }
