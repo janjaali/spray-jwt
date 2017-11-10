@@ -2,7 +2,7 @@ package org.janjaali.sprayjwt.algorithms
 
 import org.scalatest.FunSpec
 
-class HashingAlgorithmTest extends FunSpec {
+class HashingAlgorithmSpec extends FunSpec {
 
   describe("HashingAlgorithm") {
     describe("maps Strings to HashingAlgorithm") {

@@ -2,7 +2,7 @@ package org.janjaali.sprayjwt.encoder
 
 import org.scalatest.FunSpec
 
-class ByteEncoderTest extends FunSpec {
+class ByteEncoderSpec extends FunSpec {
 
   describe("ByteEncoder") {
     it("encodes text as byte array") {

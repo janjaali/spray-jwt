@@ -2,7 +2,7 @@ package org.janjaali.sprayjwt.encoder
 
 import org.scalatest.FunSpec
 
-class Base64DecoderTest extends FunSpec {
+class Base64DecoderSpec extends FunSpec {
 
   describe("Base64Decoder") {
     it("decodes text as Base64 decoded byte-array") {
