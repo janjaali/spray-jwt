@@ -1,7 +1,6 @@
 package org.janjaali.sprayjwt
 
-case class JwtClaims
-(
+case class JwtClaims(
   iss: Option[String] = None,
   sub: Option[String] = None,
   aud: Option[Set[String]] = None,
@@ -9,5 +8,5 @@ case class JwtClaims
   nbf: Option[Long] = None,
   isa: Option[Long] = None,
   iat: Option[Long] = None,
-  jti: Option[String] = None,
+  jti: Option[String] = None
 )

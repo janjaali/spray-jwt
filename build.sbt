@@ -15,3 +15,13 @@ val dependencies = Seq(
 
 libraryDependencies ++= dependencies
 libraryDependencies ++= testDependencies
+
+lazy val scalastyleTest = taskKey[Unit]("scalastyleTest")
+scalastyleTest := (scalastyle in Test).toTask("").value
+
+(scalastyle in Compile) := ((scalastyle in Compile) dependsOn scalastyleTest).toTask("").value
+
+lazy val scalastyleCompile = taskKey[Unit]("scalastyleCompile")
+scalastyleCompile := (scalastyle in Compile).toTask("").value
+
+(compile in Compile) := ((compile in Compile) dependsOn scalastyleCompile).value

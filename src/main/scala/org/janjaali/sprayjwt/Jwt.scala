@@ -131,7 +131,7 @@ object Jwt {
       "nbf" -> jwtClaims.nbf,
       "isa" -> jwtClaims.isa,
       "iat" -> jwtClaims.iat,
-      "jti" -> jwtClaims.jti,
+      "jti" -> jwtClaims.jti
     ).filter(_._2.nonEmpty)
       .map {
         case (name, Some(value: String)) => name -> JsString(value)
