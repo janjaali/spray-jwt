@@ -9,7 +9,7 @@ val testDependencies = Seq(
 )
 
 val dependencies = Seq(
-  "io.spray" %%  "spray-json" % "1.3.3",
+  "io.spray" %% "spray-json" % "1.3.3",
   "org.bouncycastle" % "bcpkix-jdk15on" % "1.58"
 )
 
@@ -20,8 +20,3 @@ lazy val scalastyleTest = taskKey[Unit]("scalastyleTest")
 scalastyleTest := (scalastyle in Test).toTask("").value
 
 (scalastyle in Compile) := ((scalastyle in Compile) dependsOn scalastyleTest).toTask("").value
-
-lazy val scalastyleCompile = taskKey[Unit]("scalastyleCompile")
-scalastyleCompile := (scalastyle in Compile).toTask("").value
-
-(compile in Compile) := ((compile in Compile) dependsOn scalastyleCompile).value
