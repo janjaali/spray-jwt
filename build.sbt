@@ -2,7 +2,9 @@ import scala.sys.process._
 
 name := "spray-jwt"
 
-version := "1.0.0-SNAPSHOT"
+organization := "net.habashi"
+
+version := "1.0.0"
 
 scalaVersion := "2.12.3"
 
