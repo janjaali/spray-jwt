@@ -19,14 +19,14 @@ if [ $compiles -ne 0 ]
 then
     echo "  [KO] Error compiling "
 else
-    echo "* Checking production code style…"
+    echo "* Checking code style…"
 
     sbt scalastyle > /dev/null
     productionScalastyle=$?
 
     if [ $productionScalastyle -ne 0 ]
     then
-        echo "  [KO] Error checking production code style"
+        echo "  [KO] Error checking code style"
     fi
 fi
 
@@ -49,6 +49,6 @@ then
     exit 1
 elif [ $productionScalastyle -ne 0 ]
 then
-    echo "[KO] Cancelling commit due to production code style error (run 'sbt scalastyle' for more information)"
+    echo "[KO] Cancelling commit due to code style error (run 'sbt scalastyle' for more information)"
     exit 2
 fi
