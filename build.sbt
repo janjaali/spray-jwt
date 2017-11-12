@@ -8,6 +8,15 @@ version := "1.0.0"
 
 scalaVersion := "2.12.3"
 
+publishTo := {
+  val nexus = "https://my.artifact.repo.net/"
+  if (isSnapshot.value) {
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  } else {
+    Some("releases" at nexus + "service/local/staging/deploy/maven2")
+  }
+}
+
 val testDependencies = Seq(
   "org.scalatest" %% "scalatest" % "3.0.4" % "test"
 )
