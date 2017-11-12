@@ -1,8 +1,8 @@
 #!/bin/bash
 
 echo ""
-echo "Doing some Checks…"
-echo "* Stashing non-staged changes so we don't check them"…
+echo "Doing some Checks..."
+echo "* Stashing non-staged changes so we don't check them"
 git diff --quiet
 hadNoNonStagedChanges=$?
 
@@ -11,7 +11,7 @@ then
     git stash --keep-index -u > /dev/null
 fi
 
-echo "* Compiling…"
+echo "* Compiling..."
 sbt test:compile > /dev/null
 compiles=$?
 
@@ -19,14 +19,22 @@ if [ $compiles -ne 0 ]
 then
     echo "  [KO] Error compiling "
 else
-    echo "* Checking code style…"
-
-    sbt scalastyle > /dev/null
-    productionScalastyle=$?
-
-    if [ $productionScalastyle -ne 0 ]
+    echo "* Testing..."
+    sbt test > /dev/null
+    test=$?
+    if [ $test -ne 0 ]
     then
-        echo "  [KO] Error checking code style"
+      echo "  [KO] Test failures "
+    else
+      echo "* Checking code style…"
+
+      sbt scalastyle > /dev/null
+      productionScalastyle=$?
+
+      if [ $productionScalastyle -ne 0 ]
+      then
+          echo "  [KO] Error checking code style"
+      fi
     fi
 fi
 
@@ -39,13 +47,17 @@ fi
 # Final result
 echo ""
 
-if [ $compiles -eq 0 ] && [ $productionScalastyle -eq 0 ]
+if [ $compiles -eq 0 ] && [ $productionScalastyle -eq 0 ] && [ $test -eq 0 ]
 then
     echo "[OK] Your code will be committed young padawan"
     exit 0
 elif [ $compiles -ne 0 ]
 then
     echo "[KO] Cancelling commit due to compile error (run 'sbt test:compile' for more information)"
+    exit 1
+elif [ $test -ne 0 ]
+then
+    echo "[KO] Cancelling commit due to test failures (run 'sbt test' for more information)"
     exit 1
 elif [ $productionScalastyle -ne 0 ]
 then

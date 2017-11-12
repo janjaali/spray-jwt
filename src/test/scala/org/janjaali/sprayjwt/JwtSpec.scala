@@ -79,7 +79,7 @@ class JwtSpec extends FunSpec {
           exp = Some(1000),
           nbf = Some(2000),
           iat = Some(3000),
-          jti = Some("")
+          jti = Some("jwtId")
         )).get
 
         val expectedJwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjIwMDAsImFkbWluIjp0cnVlLCJuYW1lIjoiSm9obiBEb2UiLCJqdGkiOiJqd3RJZCIsImV4cCI6MTAwMCwiaXNhIjo1MDAsImlhdCI6MzAwMCwic3ViIjoic3ViamVjdCIsImF1ZCI6ImF1ZGllbmNlIiwiaXNzIjoiaXNzdWVyIn0.2zS7vqKCLPKOlre6LYMMR/dTp41Q9jV5KiEyE9I6JLw"

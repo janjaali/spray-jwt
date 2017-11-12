@@ -133,12 +133,18 @@ object Jwt {
       "iat" -> jwtClaims.iat,
       "jti" -> jwtClaims.jti
     ).filter(_._2.nonEmpty)
+      .map(entry => entry._1 -> entry._2.get)
       .map {
-        case (name, Some(value: String)) => name -> JsString(value)
-        case (name, Some(values: Set[String])) => name -> (
-          if (values.size == 1) JsString(values.head) else JsArray(values.map(JsString(_)).toVector)
-        )
-        case (name, Some(value: Long)) => name -> JsNumber(value)
+        case (name, value: String) => name -> JsString(value)
+        case (name, value: Long) => name -> JsNumber(value)
+        case (name, values: Set[_]) =>
+          if (values.size == 1) {
+            name -> JsString(values.head.asInstanceOf[String])
+          } else {
+            name -> JsArray(values.map(v => JsString(v.asInstanceOf[String])).toVector)
+          }
+        
+        case (name, _) => throw new SerializationException(s"Cannot serialize reserved claim: $name")
       }
       .toMap
   }
