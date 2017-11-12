@@ -9,14 +9,16 @@ import org.bouncycastle.openssl.{PEMKeyPair, PEMParser}
 import org.janjaali.sprayjwt.encoder.{Base64Decoder, Base64Encoder, ByteEncoder}
 
 /**
-  * Represents RsaAlgorithm.
+  * Represents RSA hashing algorithms.
+  *
+  * @param name the name of the hashing algorithm
   */
-abstract class RsaAlgorithm(override val name: String) extends HashingAlgorithm(name) {
+private[sprayjwt] abstract class RsaAlgorithm(override val name: String) extends HashingAlgorithm(name) {
 
   private val provider = "BC"
 
   /**
-    * Defines algorithm name used by provider.
+    * Hashing algorithm name used by SunJCE/BouncyCastle.
     */
   protected val cryptoAlgName: String
 

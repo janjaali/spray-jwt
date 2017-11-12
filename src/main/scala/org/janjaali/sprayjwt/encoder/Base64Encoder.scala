@@ -3,16 +3,16 @@ package org.janjaali.sprayjwt.encoder
 import java.util.Base64
 
 /**
-  * Simple Base64Encoder.
+  * Base64Encoder utility class.
   */
-object Base64Encoder {
+private[sprayjwt] object Base64Encoder {
 
   private lazy val base64Encoder: Base64.Encoder = Base64.getEncoder
 
   /**
-    * Encodes text to Base64 encoded String.
+    * Encodes text to a Base64 encoded String.
     *
-    * @param text to encode
+    * @param text the text to encode
     * @return Base64 encoded String
     */
   def encode(text: String): String = {
@@ -21,10 +21,10 @@ object Base64Encoder {
   }
 
   /**
-    * Encodes Byte-Array as String.
+    * Encodes a ByteArray as String.
     *
-    * @param byteArray to encode
-    * @return String encoded Byte-Array
+    * @param byteArray the ByteArray to encode as String
+    * @return String encoded ByteArray
     */
   def encode(byteArray: Array[Byte]): String = {
     base64Encoder.encodeToString(byteArray).replaceAll("=", "")

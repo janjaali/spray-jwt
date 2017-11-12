@@ -1,13 +1,16 @@
 package org.janjaali.sprayjwt
 
-import org.janjaali.sprayjwt.algorithms.{HS256, HashingAlgorithm}
+import org.janjaali.sprayjwt.algorithms.HashingAlgorithm
 import org.janjaali.sprayjwt.exceptions.{InvalidJwtAlgorithmException, InvalidJwtHeaderException}
 import spray.json.{JsObject, JsString, JsValue, JsonReader, JsonWriter}
 
+/**
+  * Package object for headers package.
+  */
 package object headers {
 
   /**
-    * Implicit JsonWriter to write JWT-Header as JSON.
+    * Implicit JsonWriter to write JWT header as JsValues.
     */
   implicit object JwtHeaderJsonWriter extends JsonWriter[JwtHeader] {
     def write(jwtHeader: JwtHeader): JsValue = {
@@ -18,6 +21,9 @@ package object headers {
     }
   }
 
+  /**
+    * Implicit JsonReader to read JsValues as JWT header.
+    */
   implicit object JwtHeaderJsonReader extends JsonReader[JwtHeader] {
     override def read(json: JsValue): JwtHeader = {
       json.asJsObject.getFields("alg", "typ") match {

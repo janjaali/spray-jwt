@@ -5,7 +5,7 @@ import org.janjaali.sprayjwt.algorithms.HashingAlgorithm
 /**
   * Represents JWT-Header.
   *
-  * @param algorithm used for encoding JWT
+  * @param algorithm the hashing algorithm which is used for encoding the JWT
   */
 case class JwtHeader(algorithm: HashingAlgorithm) {
   /**

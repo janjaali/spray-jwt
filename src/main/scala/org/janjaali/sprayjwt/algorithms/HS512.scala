@@ -1,7 +1,7 @@
 package org.janjaali.sprayjwt.algorithms
 
 /**
-  * Represents HS512 HashingAlgorithm.
+  * Represents HS512 hashing algorithm.
   */
 case object HS512 extends HmacAlgorithm("HS512") {
 

@@ -1,7 +1,7 @@
 package org.janjaali.sprayjwt.algorithms
 
 /**
-  * Companion Object to map Strings to HashingAlgorithms.
+  * Companion object to map Strings as hashing algorithms.
   */
 object HashingAlgorithm {
   def apply(name: String): Option[HashingAlgorithm] = name match {
@@ -16,16 +16,16 @@ object HashingAlgorithm {
 }
 
 /**
-  * Abstract class for HashingAlgorithm.
+  * Represents hashing algorithms used for JWT's.
   *
-  * @param name of HashingAlgorithm
+  * @param name the name of the hashing algorithm
   */
-abstract class HashingAlgorithm(val name: String) {
+private[sprayjwt] abstract class HashingAlgorithm(val name: String) {
   /**
     * Signs data.
     *
-    * @param data   to sign
-    * @param secret to use for signing
+    * @param data   the data to sign
+    * @param secret the secret to use for signing the data
     * @return signed data
     */
   def sign(data: String, secret: String): String
@@ -33,9 +33,9 @@ abstract class HashingAlgorithm(val name: String) {
   /**
     * Validates signature.
     *
-    * @param data      to validate
-    * @param signature to validate
-    * @param secret    to use for validation
+    * @param data      the data to validate signature for
+    * @param signature the signature to validate
+    * @param secret    the secret to use for validation
     * @return <code>true</code> if signature is valid, otherwise returns <code>false</code>
     */
   def validate(data: String, signature: String, secret: String): Boolean

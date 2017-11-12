@@ -12,7 +12,7 @@ import spray.json._
 import scala.util.{Success, Try}
 
 /**
-  * Represents a JWT Encoder/Decoder.
+  * JWT Encoder/Decoder.
   */
 object Jwt {
 
@@ -21,15 +21,25 @@ object Jwt {
   /**
     * Encodes payload as JWT.
     *
-    * @param payload   to encode
-    * @param secret    secret to use
-    * @param algorithm algorithm to use for encoding
+    * @param payload   the payload to encode as JWT's payload
+    * @param secret    the secret which is used to sign JWT
+    * @param algorithm the hashing algorithm used for encoding
     * @return encoded JWT
     */
   def encode(payload: String, secret: String, algorithm: HashingAlgorithm): Try[String] = {
     Try(encode(payload.parseJson, secret, algorithm, None))
   }
 
+  /**
+    * Encodes payload as JWT.
+    *
+    * @param payload   the payload to encode as JWT's payload
+    * @param secret    the secret which is used to sign JWT
+    * @param algorithm the hashing algorithm used for encoding
+    * @param jwtClaims reserved JWT claims to add to payload (specified claims will overwrite equal named claims in
+    *                  payload)
+    * @return encoded JWT
+    */
   def encode(payload: String, secret: String, algorithm: HashingAlgorithm, jwtClaims: JwtClaims): Try[String] = {
     Try(encode(payload.parseJson, secret, algorithm, Some(jwtClaims)))
   }
@@ -37,25 +47,46 @@ object Jwt {
   /**
     * Encodes payload as JWT.
     *
-    * @param payload   to encode
-    * @param secret    secret to use
-    * @param algorithm algorithm to use for encoding
+    * @param payload   the payload to encode as JWT's payload
+    * @param secret    the secret which is used to sign JWT
+    * @param algorithm the hashing algorithm used for encoding
     * @return encoded JWT
     */
   def encode(payload: JsValue, secret: String, algorithm: HashingAlgorithm): Try[String] = {
     Try(encode(payload, secret, algorithm, None))
   }
 
+  /**
+    * Encodes payload as JWT.
+    *
+    * @param payload   the payload to encode as JWT's payload
+    * @param secret    the secret which is used to sign JWT
+    * @param algorithm the hashing algorithm used for encoding
+    * @param jwtClaims reserved JWT claims to add to payload (specified claims will overwrite equal named claims in
+    *                  payload)
+    * @return encoded JWT
+    */
   def encode(payload: JsValue, secret: String, algorithm: HashingAlgorithm, jwtClaims: JwtClaims): Try[String] = {
     Try(encode(payload, secret, algorithm, Some(jwtClaims)))
   }
 
   /**
-    * Decodes JWT token as String.
+    * Decodes JWT token as JsValue.
     *
-    * @param token  to decode
-    * @param secret to use for decoding
-    * @return String decoded JWT token
+    * @param token  the JWT token to decode
+    * @param secret the secret to use to validate signature of JWT
+    * @return JsValue decoded JWT
+    */
+  def decode(token: String, secret: String): Try[JsValue] = {
+    decodeAsString(token, secret).map(_.parseJson)
+  }
+
+  /**
+    * Decodes JWT token as JsValue.
+    *
+    * @param token  the JWT token to decode
+    * @param secret the secret to use to validate signature of JWT
+    * @return JsValue decoded JWT
     */
   def decodeAsString(token: String, secret: String): Try[String] = {
     val splitToken = token.split("\\.")
@@ -77,17 +108,6 @@ object Jwt {
 
     val payloadDecoded = Base64Decoder.decodeAsString(payload)
     Success(payloadDecoded)
-  }
-
-  /**
-    * Decodes JWT token as JsValue.
-    *
-    * @param token  to decode
-    * @param secret to use for decoding
-    * @return JsValue decoded JWT token
-    */
-  def decode(token: String, secret: String): Try[JsValue] = {
-    decodeAsString(token, secret).map(_.parseJson)
   }
 
   private def getAlgorithmFromHeader(header: String): HashingAlgorithm = {
@@ -143,7 +163,7 @@ object Jwt {
           } else {
             name -> JsArray(values.map(v => JsString(v.asInstanceOf[String])).toVector)
           }
-        
+
         case (name, _) => throw new SerializationException(s"Cannot serialize reserved claim: $name")
       }
       .toMap

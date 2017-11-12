@@ -6,14 +6,16 @@ import javax.crypto.spec.SecretKeySpec
 import org.janjaali.sprayjwt.encoder.{Base64Encoder, ByteEncoder}
 
 /**
-  * Represents HmacAlgorithm.
+  * Represents Hmac hashing algorithms.
+  *
+  * @param name the name of the hashing algorithm
   */
-abstract class HmacAlgorithm(override val name: String) extends HashingAlgorithm(name) {
+private[sprayjwt] abstract class HmacAlgorithm(override val name: String) extends HashingAlgorithm(name) {
 
   private val provider = "SunJCE"
 
   /**
-    * Defines algorithm name used by SunJCE.
+    * Hashing algorithm name used by SunJCE/BouncyCastle.
     */
   protected val cryptoAlgName: String
 

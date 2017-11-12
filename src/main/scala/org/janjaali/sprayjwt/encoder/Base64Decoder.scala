@@ -3,17 +3,17 @@ package org.janjaali.sprayjwt.encoder
 import java.util.Base64
 
 /**
-  * Simple Base64Decoder.
+  * Base64Decoder utility class.
   */
-object Base64Decoder {
+private[sprayjwt] object Base64Decoder {
 
   private lazy val base64Decoder: Base64.Decoder = Base64.getDecoder
 
   /**
-    * Decodes Base64 encoded text as byte-array.
+    * Decodes Base64 encoded text as ByteArray.
     *
-    * @param text to decode
-    * @return Base64 decoded byte-array
+    * @param text the text to decode as ByteArray
+    * @return Base64 decoded ByteArray
     */
   def decode(text: String): Array[Byte] = {
     base64Decoder.decode(text)
@@ -22,7 +22,7 @@ object Base64Decoder {
   /**
     * Decodes Base64 decoded text as String.
     *
-    * @param text to decode
+    * @param text the text to decode as String
     * @return Base64 decoded String
     */
   def decodeAsString(text: String): String = {

@@ -1,18 +1,17 @@
 package org.janjaali.sprayjwt.encoder
 
-
 /**
-  * Simple ByteEncoder for encoding with UTF-8 charset.
+  * ByteEncoder utility class.
   */
-object ByteEncoder {
+private[sprayjwt] object ByteEncoder {
 
   private val encodingCharset = "UTF-8"
 
   /**
-    * Encodes text into byte array.
+    * Encodes text into a byte array used UTF-8 charset.
     *
-    * @param text to encode
-    * @return text encoded as byte array
+    * @param text the text to encode
+    * @return encoded byte array
     */
   def getBytes(text: String): Array[Byte] = {
     text.getBytes(encodingCharset)
