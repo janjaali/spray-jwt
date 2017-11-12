@@ -6,7 +6,7 @@ Add spray-jwt as dependency to your `build.sbt`:
 
 ```sbtshell
 libraryDependencies ++= Seq(
-  "net.janjaali" %% "spray-jwt" % "1.0.0"
+  "com.github.janjaali" %% "spray-jwt" % "1.0.0"
 )
 ```
 
