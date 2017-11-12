@@ -1,17 +1,7 @@
 #!/bin/bash
 
-# Checks if locally staged changes are formatted properly ignoring non-staged changes.
-# @see: https://gist.github.com/cvogt/2676ed6c6d1abafa3d6a
-
-PATH=$PATH:/usr/local/bin:/usr/local/sbin
-
 echo ""
 echo "Doing some Checks…"
-
-echo "* Moving to the project directory…"
-_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-DIR=$( echo $_DIR | sed 's/\/.git\/hooks$//' )
-
 echo "* Stashing non-staged changes so we don't check them"…
 git diff --quiet
 hadNoNonStagedChanges=$?
@@ -37,16 +27,6 @@ else
     if [ $productionScalastyle -ne 0 ]
     then
         echo "  [KO] Error checking production code style"
-    else
-        echo "* Checking test code style…"
-
-        sbt test:scalastyle > /dev/null
-        testScalastyle=$?
-
-        if [ $testScalastyle -ne 0 ]
-        then
-            echo "  [KO] Error checking test code style"
-        fi
     fi
 fi
 
@@ -59,7 +39,7 @@ fi
 # Final result
 echo ""
 
-if [ $compiles -eq 0 ] && [ $productionScalastyle -eq 0 ] && [ $testScalastyle -eq 0 ]
+if [ $compiles -eq 0 ] && [ $productionScalastyle -eq 0 ]
 then
     echo "[OK] Your code will be committed young padawan"
     exit 0
@@ -71,7 +51,4 @@ elif [ $productionScalastyle -ne 0 ]
 then
     echo "[KO] Cancelling commit due to production code style error (run 'sbt scalastyle' for more information)"
     exit 2
-else
-    echo "[KO] Cancelling commit due to test code style error (run 'sbt test:scalastyle' for more information)"
-    exit 3
 fi
