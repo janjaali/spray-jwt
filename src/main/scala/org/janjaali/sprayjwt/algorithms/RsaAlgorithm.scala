@@ -1,7 +1,6 @@
 package org.janjaali.sprayjwt.algorithms
 
 import java.io.{IOException, StringReader}
-import java.security.spec.X509EncodedKeySpec
 import java.security.{PrivateKey, PublicKey, Signature}
 
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo

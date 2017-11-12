@@ -68,7 +68,9 @@ class JwtSpec extends FunSpec {
 
       it("encodes as JWT with all reserved claims") {
         // scalastyle:off
-        val payload = """{"sub":"1234567890","name":"John Doe","admin":true}"""
+        val payload =
+          """{"sub":"1234567890","name":"John Doe","admin":true}"""
+
         val jwt = Jwt.encode(payload, secret, HS256, JwtClaims(
           iss = Some("issuer"),
           sub = Some("subject"),

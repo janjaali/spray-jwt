@@ -3,7 +3,7 @@ package org.janjaali.sprayjwt.algorithms
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
-import org.janjaali.sprayjwt.encoder.{Base64Decoder, Base64Encoder, ByteEncoder}
+import org.janjaali.sprayjwt.encoder.{Base64Encoder, ByteEncoder}
 
 /**
   * Represents HmacAlgorithm.
