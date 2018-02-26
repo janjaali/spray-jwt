@@ -37,3 +37,13 @@ lazy val sprayJwt = (project in file("spray-jwt"))
       "org.scalatest" %% "scalatest" % "3.0.4" % Test
     )
   )
+
+lazy val sprayJwtAkkaHttpTest = (project in file("spray-jwt-akka-http-test"))
+  .dependsOn(sprayJwt)
+  .settings(
+    name := "spray-jwt-akka-http-test",
+    libraryDependencies ++= Seq(
+      "com.typesafe.akka" %% "akka-http" % "10.0.11",
+      "com.typesafe.akka" %% "akka-http-testkit" % "10.0.11" % Test
+    )
+  )
