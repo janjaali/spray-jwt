@@ -44,6 +44,9 @@ lazy val sprayJwtAkkaHttpTest = (project in file("spray-jwt-akka-http-test"))
     name := "spray-jwt-akka-http-test",
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-http" % "10.0.11",
-      "com.typesafe.akka" %% "akka-http-testkit" % "10.0.11" % Test
+      "com.typesafe.akka" %% "akka-http-testkit" % "10.0.11" % Test,
+
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.8.0",
+      "ch.qos.logback" % "logback-classic" % "1.2.3"
     )
   )
