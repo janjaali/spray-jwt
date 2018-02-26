@@ -1,5 +1,3 @@
-import scala.sys.process._
-
 name := "spray-jwt"
 
 organization := "com.github.janjaali"
