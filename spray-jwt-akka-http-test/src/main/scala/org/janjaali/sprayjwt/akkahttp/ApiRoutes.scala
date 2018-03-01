@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.{Directives, ExceptionHandler, Route}
 import com.typesafe.scalalogging.LazyLogging
 
-class ServerRoutes extends Directives with LazyLogging {
+class ApiRoutes extends Directives with LazyLogging {
   def routes: Route = {
     handleExceptions(defaultExceptionHandler) {
       complete("dance")

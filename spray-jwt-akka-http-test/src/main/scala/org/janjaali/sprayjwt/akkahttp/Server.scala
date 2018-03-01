@@ -22,7 +22,7 @@ object Server extends LazyLogging {
     val host = "0.0.0.0"
     val port = config.getInt("server.port")
 
-    val routes = new ServerRoutes().routes
+    val routes = new ApiRoutes().routes
 
     Http().bindAndHandle(routes, host, port)
       .onComplete {
