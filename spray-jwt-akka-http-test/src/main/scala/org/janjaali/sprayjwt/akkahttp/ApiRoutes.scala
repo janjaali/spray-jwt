@@ -1,13 +1,15 @@
 package org.janjaali.sprayjwt.akkahttp
 
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.server.{Directives, ExceptionHandler, Route}
+import akka.http.scaladsl.server.{Directives, ExceptionHandler, Route, RouteConcatenation}
 import com.typesafe.scalalogging.LazyLogging
 
-class ApiRoutes extends Directives with LazyLogging {
-  def routes: Route = {
+class ApiRoutes(routes: Route*) extends Directives with LazyLogging {
+  def route: Route = {
     handleExceptions(defaultExceptionHandler) {
-      complete("dance")
+      pathPrefix("api" / "rest") {
+          RouteConcatenation.concat(routes:_*)
+      }
     }
   }
 
