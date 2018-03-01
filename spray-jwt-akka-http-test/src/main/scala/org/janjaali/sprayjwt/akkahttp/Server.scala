@@ -5,6 +5,7 @@ import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
+import org.janjaali.sprayjwt.akkahttp.resource.SecuredResourceRoute
 import org.janjaali.sprayjwt.akkahttp.token.TokenRoutes
 
 import scala.concurrent.ExecutionContextExecutor
@@ -23,10 +24,15 @@ object Server extends LazyLogging {
     val host = "0.0.0.0"
     val port = config.getInt("server.port")
 
-    val tokenRoutes = new TokenRoutes
+    val secret = config.getString("api.rest.routes.secret")
+
+    val tokenRoutes = new TokenRoutes(secret)
+
+    val securedResourceRoute = new SecuredResourceRoute(secret)
 
     val routes = new ApiRoutes(
-      tokenRoutes.routes
+      tokenRoutes.routes,
+      securedResourceRoute.routes
     ).route
 
     Http().bindAndHandle(routes, host, port)
