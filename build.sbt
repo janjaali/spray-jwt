@@ -1,4 +1,4 @@
-scalaVersion := "2.12.8"
+scalaVersion := "2.13.4"
 
 lazy val sprayJwt = (project in file("spray-jwt"))
   .settings(
