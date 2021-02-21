@@ -1,5 +1,7 @@
 scalaVersion := "2.13.4"
 
+ThisBuild / versionScheme := Some("early-semver")
+
 lazy val sprayJwt = (project in file("spray-jwt"))
   .settings(
     name := "spray-jwt",
