@@ -6,7 +6,7 @@ lazy val sprayJwt = (project in file("spray-jwt"))
   .settings(
     name := "spray-jwt",
     organization := "com.github.janjaali",
-    version := "1.0.0-SNAPSHOT",
+    version := "1.0.0",
     licenses := Seq("MIT License" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(url("https://github.com/janjaali/spray-jwt")),
     scmInfo := Some(
