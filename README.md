@@ -6,7 +6,7 @@ JWT library to use with spray-json and akka-http.
 
 Add spray-jwt as dependency to your `build.sbt`:
 
-```sbtshell
+```sbt
 libraryDependencies ++= Seq(
   "com.github.janjaali" %% "spray-jwt" % "1.0.0"
 )
