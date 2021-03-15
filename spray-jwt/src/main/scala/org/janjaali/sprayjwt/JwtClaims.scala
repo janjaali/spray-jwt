@@ -1,5 +1,6 @@
 package org.janjaali.sprayjwt
 
+@deprecated("Use jwt.model.Claim.scala")
 case class JwtClaims(
   iss: Option[String] = None,
   sub: Option[String] = None,

@@ -1,10 +1,10 @@
 package org.janjaali.sprayjwt.headers
 
 import org.janjaali.sprayjwt.algorithms.HS256
-import org.scalatest.FunSpec
+import org.scalatest.funspec.AnyFunSpec
 import spray.json._
 
-class JwtHeaderJsonProtocolSpec extends FunSpec {
+class JwtHeaderJsonProtocolSpec extends AnyFunSpec {
 
   describe("JwtHeaderJsonProtocol trait") {
     it("converts JWT-Header to JsValue") {

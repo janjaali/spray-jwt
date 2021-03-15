@@ -8,38 +8,41 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.bouncycastle.openssl.{PEMKeyPair, PEMParser}
 import org.janjaali.sprayjwt.encoder.{Base64Decoder, Base64Encoder, ByteEncoder}
 
-/**
-  * Represents RSA hashing algorithms.
-  *
-  * @param name the name of the hashing algorithm
+/** RSASSA-PKCS1-v1_5 (RSA) based algorithm using SHA-2 hash functions to sign
+  * and validate digital signatures.
   */
-private[sprayjwt] abstract class RsaAlgorithm(override val name: String) extends HashingAlgorithm(name) {
+sealed trait RsaAlgorithm extends Algorithm {
 
   private val provider = "BC"
 
-  /**
-    * Hashing algorithm name used by SunJCE/BouncyCastle.
-    */
-  protected val cryptoAlgName: String
+  protected def hashingAlgorithmName: String
 
+  // TODO: Check implementation
   override def sign(data: String, secret: String): String = {
+
     val key = getPrivateKey(secret)
 
     val dataByteArray = ByteEncoder.getBytes(data)
 
-    val signature = Signature.getInstance(cryptoAlgName, provider)
+    val signature = Signature.getInstance(hashingAlgorithmName, provider)
     signature.initSign(key)
     signature.update(dataByteArray)
     val signatureByteArray = signature.sign
     Base64Encoder.encode(signatureByteArray)
   }
 
-  override def validate(data: String, signature: String, secret: String): Boolean = {
+  // TODO: Check implementation
+  override def validate(
+      data: String,
+      signature: String,
+      secret: String
+  ): Boolean = {
+
     val key = getPublicKey(secret)
 
     val dataByteArray = ByteEncoder.getBytes(data)
 
-    val rsaSignature = Signature.getInstance(cryptoAlgName, provider)
+    val rsaSignature = Signature.getInstance(hashingAlgorithmName, provider)
     rsaSignature.initVerify(key)
     rsaSignature.update(dataByteArray)
     rsaSignature.verify(Base64Decoder.decode(signature))
@@ -53,7 +56,7 @@ private[sprayjwt] abstract class RsaAlgorithm(override val name: String) extends
       case Some(publicKeyInfo: SubjectPublicKeyInfo) =>
         val converter = new JcaPEMKeyConverter
         converter.getPublicKey(publicKeyInfo)
-      case _ => throw new IOException(s"Invalid key for $cryptoAlgName")
+      case _ => throw new IOException(s"Invalid key for $hashingAlgorithmName")
     }
   }
 
@@ -65,8 +68,31 @@ private[sprayjwt] abstract class RsaAlgorithm(override val name: String) extends
       case Some(keyPair: PEMKeyPair) =>
         val converter = new JcaPEMKeyConverter
         converter.getKeyPair(keyPair).getPrivate
-      case _ => throw new IOException(s"Invalid key for $cryptoAlgName")
+      case _ => throw new IOException(s"Invalid key for $hashingAlgorithmName")
     }
   }
+}
 
+object RsaAlgorithm {
+
+  case object Rs256 extends RsaAlgorithm {
+
+    override val name: String = "RS256"
+
+    override protected def hashingAlgorithmName: String = "SHA256withRSA"
+  }
+
+  case object Rs384 extends RsaAlgorithm {
+
+    override val name: String = "RS384"
+
+    override protected def hashingAlgorithmName: String = "SHA384withRSA"
+  }
+
+  case object Rs512 extends RsaAlgorithm {
+
+    override val name: String = "RS512"
+
+    override protected def hashingAlgorithmName: String = "SHA512withRSA"
+  }
 }

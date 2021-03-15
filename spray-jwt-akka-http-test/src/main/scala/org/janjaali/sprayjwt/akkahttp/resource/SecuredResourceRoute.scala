@@ -2,7 +2,7 @@ package org.janjaali.sprayjwt.akkahttp.resource
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import akka.http.scaladsl.server.{Directives, Route}
-import org.janjaali.sprayjwt.Jwt
+import org.janjaali.sprayjwt.LegacyJwt
 
 class SecuredResourceRoute(secret: String) extends Directives {
   val routes: Route = Route {
@@ -10,7 +10,7 @@ class SecuredResourceRoute(secret: String) extends Directives {
       get {
         rejectEmptyResponse {
           parameter("token") { token =>
-            val payload = Jwt.decode(token, secret)
+            val payload = LegacyJwt.decode(token, secret)
             complete(payload)
           }
         }

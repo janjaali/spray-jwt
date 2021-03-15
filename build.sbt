@@ -34,9 +34,18 @@ lazy val sprayJwt = (project in file("spray-jwt"))
       }
     },
     libraryDependencies ++= Seq(
+      // JSON
       "io.spray" %% "spray-json" % "1.3.3",
+
+      // Encryption
       "org.bouncycastle" % "bcpkix-jdk15on" % "1.58",
-      "org.scalatest" %% "scalatest" % "3.0.4" % Test
+
+      // Test
+      "org.scalatest" %% "scalatest" % "3.2.6" % Test,
+
+      // Property based tests
+      "org.scalacheck" %% "scalacheck" % "1.15.3" % Test,
+      "org.scalatestplus" %% "scalacheck-1-15" % "3.2.6.0" % Test
     )
   )
 

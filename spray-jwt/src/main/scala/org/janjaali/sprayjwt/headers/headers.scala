@@ -1,6 +1,6 @@
 package org.janjaali.sprayjwt
 
-import org.janjaali.sprayjwt.algorithms.HashingAlgorithm
+import org.janjaali.sprayjwt.algorithms.Algorithm
 import org.janjaali.sprayjwt.exceptions.{InvalidJwtAlgorithmException, InvalidJwtHeaderException}
 import spray.json.{JsObject, JsString, JsValue, JsonReader, JsonWriter}
 
@@ -28,7 +28,7 @@ package object headers {
     override def read(json: JsValue): JwtHeader = {
       json.asJsObject.getFields("alg", "typ") match {
         case Seq(JsString(alg), JsString(typ)) if typ == "JWT" =>
-          HashingAlgorithm(alg) match {
+          Algorithm.forName(alg) match {
             case Some(algorithm) => JwtHeader(algorithm)
             case _ => throw new InvalidJwtAlgorithmException(s"Unsupported JWT algorithm $alg")
           }
@@ -36,5 +36,4 @@ package object headers {
       }
     }
   }
-
-}
+} // TODO: Many test are probably failing, Fix them!
