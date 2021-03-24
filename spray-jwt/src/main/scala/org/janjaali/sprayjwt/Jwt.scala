@@ -15,8 +15,8 @@ import spray.json._
 import scala.util.{Success, Try}
 
 import org.janjaali.sprayjwt.json._
-import org.janjaali.sprayjwt.jwt.model.ClaimsSet
-import org.janjaali.sprayjwt.jwt.model.JwsPayload
+import org.janjaali.sprayjwt.jwt.ClaimsSet
+import org.janjaali.sprayjwt.jwt.JwsPayload
 
 /** TODO:
   */
@@ -79,7 +79,7 @@ private case class JoseHeader(algorithm: Algorithm) {
     JsonObject(
       Map(
         "typ" -> JsonString(this.typ),
-        "alg" -> JsonString(algorithm.name)
+        "alg" -> JsonString("algorithm.name") // TODO: JSON Writer for JoseHeader needed
       )
     )
   }
@@ -222,7 +222,7 @@ object LegacyJwt {
 
     val algorithm = getAlgorithmFromHeader(header)
 
-    if (!algorithm.validate(data, signature, secret)) {
+    if (!algorithm.validate(signature, data, secret)) {
       throw new InvalidSignatureException()
     }
 

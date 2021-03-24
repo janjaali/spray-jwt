@@ -12,7 +12,7 @@ class JwtSpec extends AnyFunSpec {
 
       it("encodes as JWT") {
         val payload = """{"sub":"1234567890","name":"John Doe","admin":true}"""
-        val jwt = LegacyJwt.encode(payload, secret, HS256).get
+        val jwt = LegacyJwt.encode(payload, secret, Algorithm.Hmac.Hs256).get
 
         // scalastyle:off
         val expectedJwt =
@@ -25,7 +25,12 @@ class JwtSpec extends AnyFunSpec {
       it("encodes as JWT with iss") {
         val payload = """{"sub":"1234567890","name":"John Doe","admin":true}"""
         val jwt = LegacyJwt
-          .encode(payload, secret, HS256, JwtClaims(iss = Some("issuer")))
+          .encode(
+            payload,
+            secret,
+            Algorithm.Hmac.Hs256,
+            JwtClaims(iss = Some("issuer"))
+          )
           .get
 
         // scalastyle:off
@@ -44,7 +49,7 @@ class JwtSpec extends AnyFunSpec {
           "admin" -> JsBoolean(true)
         )
 
-        val jwt = LegacyJwt.encode(jsValue, secret, HS256).get
+        val jwt = LegacyJwt.encode(jsValue, secret, Algorithm.Hmac.Hs256).get
 
         // scalastyle:off
         val expectedJwt =
@@ -63,7 +68,12 @@ class JwtSpec extends AnyFunSpec {
         )
 
         val jwt = LegacyJwt
-          .encode(jsValue, secret, HS256, JwtClaims(iss = Some("issuer")))
+          .encode(
+            jsValue,
+            secret,
+            Algorithm.Hmac.Hs256,
+            JwtClaims(iss = Some("issuer"))
+          )
           .get
 
         // scalastyle:off
@@ -83,7 +93,7 @@ class JwtSpec extends AnyFunSpec {
           .encode(
             payload,
             secret,
-            HS256,
+            Algorithm.Hmac.Hs256,
             JwtClaims(
               iss = Some("issuer"),
               sub = Some("subject"),
@@ -155,7 +165,7 @@ class JwtSpec extends AnyFunSpec {
 
       it("encodes as JWT") {
         val payload = """{"sub":"1234567890","name":"John Doe","admin":true}"""
-        val jwt = LegacyJwt.encode(payload, secret, HS384).get
+        val jwt = LegacyJwt.encode(payload, secret, Algorithm.Hmac.Hs384).get
 
         // scalastyle:off
         val expectedJwt =
@@ -183,7 +193,7 @@ class JwtSpec extends AnyFunSpec {
 
       it("encodes as JWT") {
         val payload = """{"sub":"1234567890","name":"John Doe","admin":true}"""
-        val jwt = LegacyJwt.encode(payload, secret, HS512).get
+        val jwt = LegacyJwt.encode(payload, secret, Algorithm.Hmac.Hs512).get
 
         // scalastyle:off
         val expectedJwt =
@@ -215,7 +225,7 @@ class JwtSpec extends AnyFunSpec {
           finally source.close
 
         val payload = """{"sub":"1234567890","name":"John Doe","admin":true}"""
-        val jwt = LegacyJwt.encode(payload, secret, RS256).get
+        val jwt = LegacyJwt.encode(payload, secret, Algorithm.Rsa.Rs256).get
 
         // scalastyle:off
         val expectedJwt =
@@ -253,7 +263,7 @@ class JwtSpec extends AnyFunSpec {
           finally source.close
 
         val payload = """{"sub":"1234567890","name":"John Doe","admin":true}"""
-        val jwt = LegacyJwt.encode(payload, secret, RS384).get
+        val jwt = LegacyJwt.encode(payload, secret, Algorithm.Rsa.Rs384).get
 
         // scalastyle:off
         val expectedJwt =
@@ -291,7 +301,7 @@ class JwtSpec extends AnyFunSpec {
           finally source.close
 
         val payload = """{"sub":"1234567890","name":"John Doe","admin":true}"""
-        val jwt = LegacyJwt.encode(payload, secret, RS512).get
+        val jwt = LegacyJwt.encode(payload, secret, Algorithm.Rsa.Rs512).get
 
         // scalastyle:off
         val expectedJwt =

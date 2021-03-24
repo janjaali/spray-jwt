@@ -1,4 +1,4 @@
-package org.janjaali.sprayjwt.jwt.model
+package org.janjaali.sprayjwt.jwt
 
 import org.janjaali.sprayjwt.tests.ScalaTestSpec
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks

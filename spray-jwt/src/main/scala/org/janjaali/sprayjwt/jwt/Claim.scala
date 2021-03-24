@@ -1,4 +1,4 @@
-package org.janjaali.sprayjwt.jwt.model
+package org.janjaali.sprayjwt.jwt
 
 import org.janjaali.sprayjwt.json.{JsonValue, JsonWriter}
 

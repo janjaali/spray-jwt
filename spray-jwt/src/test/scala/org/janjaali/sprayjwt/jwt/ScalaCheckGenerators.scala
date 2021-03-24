@@ -1,4 +1,4 @@
-package org.janjaali.sprayjwt.jwt.model
+package org.janjaali.sprayjwt.jwt
 
 import org.janjaali.sprayjwt.json.CommonJsonWriters
 import org.scalacheck.Gen
@@ -55,8 +55,12 @@ private[jwt] object ScalaCheckGenerators {
     )
   }
 
+  def claimsGen: Gen[List[Claim]] = {
+    Gen.listOf(claimGen)
+  }
+
   def claimsSetGen: Gen[ClaimsSet] = {
-    Gen.listOf(claimGen).map(ClaimsSet.apply)
+    claimsGen.map(ClaimsSet.apply)
   }
 
   def jwsPayloadGen: Gen[JwsPayload] = {
