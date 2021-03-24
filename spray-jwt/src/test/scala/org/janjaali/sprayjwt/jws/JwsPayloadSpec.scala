@@ -1,4 +1,4 @@
-package org.janjaali.sprayjwt.jwt
+package org.janjaali.sprayjwt.jws
 
 import org.janjaali.sprayjwt.tests.ScalaTestSpec
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
@@ -14,7 +14,7 @@ class JwsPayloadSpec extends ScalaTestSpec with ScalaCheckDrivenPropertyChecks {
 
         val expectedJsonObjectMembers = {
 
-          jwsPayload.claims.claims.map { claim =>
+          jwsPayload.claimsSet.claims.map { claim =>
             claim.name -> claim.valueAsJson
           }.toMap
         }

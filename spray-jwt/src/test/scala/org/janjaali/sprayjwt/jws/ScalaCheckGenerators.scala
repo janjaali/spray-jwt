@@ -1,6 +1,6 @@
 package org.janjaali.sprayjwt.jws
 
-import org.janjaali.sprayjwt.algorithms
+import org.janjaali.sprayjwt.{algorithms, jwt}
 import org.scalacheck.{Arbitrary, Gen}
 
 object ScalaCheckGenerators {
@@ -60,5 +60,9 @@ object ScalaCheckGenerators {
 
   def joseHeader: Gen[JoseHeader] = {
     headersGen.map(JoseHeader.apply)
+  }
+
+  def jwsPayloadGen: Gen[JwsPayload] = {
+    jwt.ScalaCheckGenerators.claimsSetGen.map(JwsPayload.apply)
   }
 }

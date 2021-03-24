@@ -15,8 +15,8 @@ import spray.json._
 import scala.util.{Success, Try}
 
 import org.janjaali.sprayjwt.json._
-import org.janjaali.sprayjwt.jwt.ClaimsSet
-import org.janjaali.sprayjwt.jwt.JwsPayload
+import org.janjaali.sprayjwt.jwt.JwtClaimsSet
+import org.janjaali.sprayjwt.jws.JwsPayload
 
 /** TODO:
   */
@@ -88,7 +88,7 @@ private case class JoseHeader(algorithm: Algorithm) {
 object Jwt {
 
   def apply(
-      claims: ClaimsSet,
+      claims: JwtClaimsSet,
       algorithm: Algorithm,
       secret: String
   )(implicit jsonStringSerializer: JsonStringSerializer): Jwt = {

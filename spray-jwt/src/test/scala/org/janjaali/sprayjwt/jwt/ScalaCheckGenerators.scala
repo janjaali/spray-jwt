@@ -5,7 +5,7 @@ import org.scalacheck.Gen
 
 import java.time.Instant
 
-private[jwt] object ScalaCheckGenerators {
+object ScalaCheckGenerators {
 
   /** Generator for numeric dates containing epoch seconds in the time frame of:
     * [now - 100 years, now + 100 years].
@@ -59,11 +59,7 @@ private[jwt] object ScalaCheckGenerators {
     Gen.listOf(claimGen)
   }
 
-  def claimsSetGen: Gen[ClaimsSet] = {
-    claimsGen.map(ClaimsSet.apply)
-  }
-
-  def jwsPayloadGen: Gen[JwsPayload] = {
-    claimsSetGen.map(JwsPayload.apply)
+  def claimsSetGen: Gen[JwtClaimsSet] = {
+    claimsGen.map(JwtClaimsSet.apply)
   }
 }

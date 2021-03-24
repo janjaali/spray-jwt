@@ -11,7 +11,7 @@ class ClaimsSetSpec extends ScalaTestSpec with ScalaCheckDrivenPropertyChecks {
 
     "when constructed" - {
 
-      val sut = ClaimsSet.apply _
+      val sut = JwtClaimsSet.apply _
 
       "should not contain claims with the same name." in {
 

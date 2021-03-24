@@ -2,14 +2,15 @@ package org.janjaali.sprayjwt.jwt
 
 import org.janjaali.sprayjwt.util.CollectionsFactory
 
-/** Claims Set represents a data structure whose members are the claims. The
-  * claim names within a Claims Set MUST be unique.
+/** Claims Set represents a data structure whose members are the claims.
   *
-  * @param claims uniquely named claims
+  * The claim names within a Claims Set are unique.
+  *
+  * @param claims set of uniquely named claims
   */
-sealed abstract case class ClaimsSet private (claims: Set[Claim])
+sealed abstract case class JwtClaimsSet private (claims: Set[Claim])
 
-object ClaimsSet {
+object JwtClaimsSet {
 
   /** Constructs a Claims Set for a set of uniquely named claims.
     *
@@ -19,12 +20,12 @@ object ClaimsSet {
     * @param claims claims that should be added to the Claims Set.
     * @return Claims Set
     */
-  def apply(claims: Seq[Claim]): ClaimsSet = {
+  def apply(claims: Seq[Claim]): JwtClaimsSet = {
 
     val claimsWithUniqueNames = {
       CollectionsFactory.uniqueElements(claims)(_.name)
     }
 
-    new ClaimsSet(claimsWithUniqueNames.toSet) {}
+    new JwtClaimsSet(claimsWithUniqueNames.toSet) {}
   }
 }
