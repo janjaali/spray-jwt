@@ -6,6 +6,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.bouncycastle.openssl.{PEMKeyPair, PEMParser}
 import org.janjaali.sprayjwt.encoder.{Base64Decoder, Base64Encoder, ByteEncoder}
+import org.janjaali.sprayjwt.jws.{JoseHeader, JwsPayload, JwsSignature}
 
 import java.io.{IOException, StringReader}
 import java.security.{PrivateKey, PublicKey, Signature}
@@ -14,9 +15,18 @@ import java.security.{PrivateKey, PublicKey, Signature}
   */
 sealed trait Algorithm {
 
-  // TODO: Maybe a better suited signature
-  // Digitally signs the contents of the given JWS Header and the JWS Payload.
-  // def sign(header: JoseHeader, payload: JwsPayload): String
+  /** Digitally signs the protected headers of the given Jose Header and the Jws
+    * Payload.
+    *
+    * @param joseHeader jose header
+    * @param jwsPayload jws payload
+    * @param secret secret
+    */
+  def sign(
+      joseHeader: JoseHeader,
+      jwsPayload: JwsPayload,
+      secret: Secret
+  ): JwsSignature
 
   /** Signs data. // TODO: legacy?
     *
@@ -51,6 +61,22 @@ object Algorithm {
     private val provider = "SunJCE"
 
     protected def hashingAlgorithmName: String
+
+    override def sign(
+        joseHeader: JoseHeader,
+        jwsPayload: JwsPayload,
+        secret: Secret
+    ): JwsSignature = {
+
+      val key = new SecretKeySpec(secret.asByteArray, hashingAlgorithmName)
+
+      val mac = Mac.getInstance(hashingAlgorithmName, provider)
+      mac.init(key)
+
+      val signature = mac.doFinal(???)
+
+      JwsSignature(Base64Encoder.encode(signature))
+    }
 
     // TODO: Check implementation
     override def sign(data: String, secret: String): String = {
@@ -101,6 +127,15 @@ object Algorithm {
     private val provider = "BC"
 
     protected def hashingAlgorithmName: String
+
+    override def sign(
+        joseHeader: JoseHeader,
+        jwsPayload: JwsPayload,
+        secret: Secret
+    ): JwsSignature = {
+
+      ???
+    }
 
     // TODO: Check implementation
     override def sign(data: String, secret: String): String = {

@@ -15,7 +15,7 @@ private[sprayjwt] object Base64Encoder {
     * @return Base64 encoded String
     */
   def encode(text: String): String = {
-    val textAsByteArray = ByteEncoder.getBytes(text)
+    val textAsByteArray = text.getBytes("UTF-8")
     encode(textAsByteArray)
   }
 

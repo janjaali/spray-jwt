@@ -1,6 +1,7 @@
 package org.janjaali.sprayjwt.jws
 
 import org.janjaali.sprayjwt.algorithms.Algorithm
+import org.janjaali.sprayjwt.json.JsonObject
 import org.janjaali.sprayjwt.tests.{ScalaCheckGeneratorsSampler, ScalaTestSpec}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
@@ -37,63 +38,32 @@ class JoseHeaderSpec extends ScalaTestSpec with ScalaCheckDrivenPropertyChecks {
         }
       }
 
-      "with unprotected headers with the same name" - {
+      "with headers with the same name" - {
 
         "should add the later ones." in {
 
-          val joseHeaders = sut(
-            List(
-              JoseHeader.Header.UnprotectedHeader.Private("name", 1),
-              JoseHeader.Header.UnprotectedHeader.Private("name", 3)
-            )
-          )
-
-          joseHeaders.headers should contain only {
-            JoseHeader.Header.UnprotectedHeader.Private("name", 3)
-          }
-        }
-      }
-
-      "with protected headers with the same name" - {
-
-        "should add the later ones." in {
+          import org.janjaali.sprayjwt.json.CommonJsonWriters.Implicits._
 
           val joseHeaders = sut(
             List(
-              JoseHeader.Header.ProtectedHeader.Private("name", 1),
-              JoseHeader.Header.ProtectedHeader.Private("name", 3)
+              Header.Private("name", 1),
+              Header.Private("name", 3)
             )
           )
 
-          joseHeaders.headers should contain only {
-            JoseHeader.Header.ProtectedHeader.Private("name", 3)
-          }
-        }
-      }
-
-      "with protected and unprotected headers with the same name" - {
-
-        "should add the protected ones." in {
-
-          val joseHeaders = sut(
-            List(
-              JoseHeader.Header.ProtectedHeader.Private("name", 1),
-              JoseHeader.Header.UnprotectedHeader.Private("name", 3)
-            )
-          )
-
-          joseHeaders.headers should contain only {
-            JoseHeader.Header.ProtectedHeader.Private("name", 1)
-          }
+          joseHeaders.headers should contain only Header.Private("name", 3)
         }
       }
     }
 
-    "should return all headers." in {
+    "when serialized as JSON" - {
 
-      forAll(ScalaCheckGenerators.joseHeader) { joseHeader =>
-        joseHeader.headers should contain theSameElementsAs {
-          joseHeader.protectedHeaders ++ joseHeader.unprotectedHeaders
+      "should result in a JSON object." in {
+
+        forAll(ScalaCheckGenerators.joseHeader) { joseHeader =>
+          joseHeader.asJson shouldBe a[JsonObject]
+
+          fail("add some more tests for this method.")
         }
       }
     }
