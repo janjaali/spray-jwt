@@ -23,7 +23,7 @@ class JoseHeaderSpec extends ScalaTestSpec with ScalaCheckDrivenPropertyChecks {
         }
       }
 
-      "should add all headers with unique names." in {
+      "should add headers with distinct names." in {
 
         forAll(ScalaCheckGenerators.headersGen) { headers =>
           val distinctNamedHeaders = {
