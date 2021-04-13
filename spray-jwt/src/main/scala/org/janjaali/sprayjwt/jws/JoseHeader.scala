@@ -9,9 +9,7 @@ import org.janjaali.sprayjwt.json.JsonObject
   *
   * @param headers set of contained headers
   */
-sealed abstract case class JoseHeader private (
-    headers: Set[Header]
-) {
+sealed abstract case class JoseHeader private (headers: Set[Header]) {
 
   def asJson: JsonObject = {
     JsonObject(headers.map { header =>

@@ -45,10 +45,7 @@ class JoseHeaderSpec extends ScalaTestSpec with ScalaCheckDrivenPropertyChecks {
           import org.janjaali.sprayjwt.json.CommonJsonWriters.Implicits._
 
           val joseHeaders = sut(
-            List(
-              Header.Private("name", 1),
-              Header.Private("name", 3)
-            )
+            List(Header.Private("name", 1), Header.Private("name", 3))
           )
 
           joseHeaders.headers should contain only Header.Private("name", 3)
@@ -61,9 +58,14 @@ class JoseHeaderSpec extends ScalaTestSpec with ScalaCheckDrivenPropertyChecks {
       "should result in a JSON object." in {
 
         forAll(ScalaCheckGenerators.joseHeader) { joseHeader =>
-          joseHeader.asJson shouldBe a[JsonObject]
 
-          fail("add some more tests for this method.")
+          val jsonObject = joseHeader.asJson
+
+          val expectedMembers = joseHeader.headers.map { header =>
+            header.name -> header.valueAsJson
+          }
+
+          jsonObject.members should contain theSameElementsAs expectedMembers
         }
       }
     }
