@@ -106,15 +106,21 @@ object Algorithm {
     */
   object Hmac {
 
-    case object Hs256 extends Hmac {
+    /** HMAC using SHA-256
+      */
+    final case object Hs256 extends Hmac {
       override val hashingAlgorithmName = "HMACSHA256"
     }
 
-    case object Hs384 extends Hmac {
+    /** HMAC using SHA-384
+      */
+    final case object Hs384 extends Hmac {
       override val hashingAlgorithmName = "HMACSHA384"
     }
 
-    case object Hs512 extends Hmac {
+    /** HMAC using SHA-512
+      */
+    final case object Hs512 extends Hmac {
       override val hashingAlgorithmName = "HMACSHA512"
     }
   }
@@ -199,15 +205,21 @@ object Algorithm {
     */
   object Rsa {
 
-    case object Rs256 extends Rsa {
+    /** RSASSA-PKCS1-v1_5 using SHA-256
+      */
+    final case object Rs256 extends Rsa {
       override protected def hashingAlgorithmName: String = "SHA256withRSA"
     }
 
-    case object Rs384 extends Rsa {
+    /** RSASSA-PKCS1-v1_5 using SHA-384
+      */
+    final case object Rs384 extends Rsa {
       override protected def hashingAlgorithmName: String = "SHA384withRSA"
     }
 
-    case object Rs512 extends Rsa {
+    /** RSASSA-PKCS1-v1_5 using SHA-512
+      */
+    final case object Rs512 extends Rsa {
       override protected def hashingAlgorithmName: String = "SHA512withRSA"
     }
   }
