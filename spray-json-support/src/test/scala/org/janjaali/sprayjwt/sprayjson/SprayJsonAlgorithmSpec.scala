@@ -8,8 +8,6 @@ final class SprayJsonAlgorithmSpec extends AlgorithmSpec {
 
   "SprayJsonAlgorithm" - {
 
-    behave like signWithHmacAlgorithm(
-      Algorithm.Hmac.Hs256
-    )
+    verifyWithHmac256Algorithm
   }
 }

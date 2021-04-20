@@ -5,7 +5,11 @@ import javax.crypto.spec.SecretKeySpec
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.bouncycastle.openssl.{PEMKeyPair, PEMParser}
-import org.janjaali.sprayjwt.encoder.{Base64Decoder, Base64Encoder, ByteEncoder}
+import org.janjaali.sprayjwt.encoder.{
+  Base64Decoder,
+  Base64UrlEncoder,
+  ByteEncoder
+}
 import org.janjaali.sprayjwt.json.{JsonStringSerializer, JsonValue}
 import org.janjaali.sprayjwt.jws.{JoseHeader, JwsPayload, JwsSignature}
 
@@ -29,7 +33,7 @@ sealed trait Algorithm {
       secret: Secret
   )(implicit
       serializeJson: JsonValue => String,
-      base64encoder: Base64Encoder
+      base64encoder: Base64UrlEncoder
   ): JwsSignature
 
   /** Signs data. // TODO: legacy?
@@ -43,7 +47,7 @@ sealed trait Algorithm {
       secret: String
   )(implicit
       serializer: JsonValue => String,
-      base64encoder: Base64Encoder
+      base64encoder: Base64UrlEncoder
   ): String
 
   // TODO: Check if serializer is needed
@@ -63,7 +67,7 @@ sealed trait Algorithm {
       secret: String
   )(implicit
       serializer: JsonValue => String,
-      base64encoder: Base64Encoder
+      base64encoder: Base64UrlEncoder
   ): Boolean
 }
 
@@ -86,15 +90,13 @@ object Algorithm {
         secret: Secret
     )(implicit
         serializeJson: JsonValue => String,
-        base64encoder: Base64Encoder
+        base64encoder: Base64UrlEncoder
     ): JwsSignature = {
 
       val mac = Mac.getInstance(hashingAlgorithmName, provider)
       val key = new SecretKeySpec(secret.asByteArray, hashingAlgorithmName)
 
       mac.init(key)
-
-      println(s"JOSE Header JSON: ${serializeJson(joseHeader.asJson)}")
 
       val base64UrlEncodedJoseHeader = {
         base64encoder.encode {
@@ -103,8 +105,6 @@ object Algorithm {
           }
         }
       }
-
-      println(s"Base64EncodedJoseHeader: '$base64UrlEncodedJoseHeader'.")
 
       val base64UrlEncodedJwsPayload = {
         base64encoder.encode {
@@ -129,7 +129,7 @@ object Algorithm {
         secret: String
     )(implicit
         serializeJson: JsonValue => String,
-        base64encoder: Base64Encoder
+        base64encoder: Base64UrlEncoder
     ): String = {
 
       val secretAsByteArray = ByteEncoder.getBytes(secret)
@@ -151,7 +151,7 @@ object Algorithm {
         secret: String
     )(implicit
         serializeJson: JsonValue => String,
-        base64encoder: Base64Encoder
+        base64encoder: Base64UrlEncoder
     ): Boolean = {
       sign(data, secret) == signature
     }
@@ -195,7 +195,7 @@ object Algorithm {
         secret: Secret
     )(implicit
         serializeJson: JsonValue => String,
-        base64encoder: Base64Encoder
+        base64encoder: Base64UrlEncoder
     ): JwsSignature = {
 
       ???
@@ -207,7 +207,7 @@ object Algorithm {
         secret: String
     )(implicit
         serializeJson: JsonValue => String,
-        base64encoder: Base64Encoder
+        base64encoder: Base64UrlEncoder
     ): String = {
 
       val key = getPrivateKey(secret)
@@ -228,7 +228,7 @@ object Algorithm {
         secret: String
     )(implicit
         serializeJson: JsonValue => String,
-        base64encoder: Base64Encoder
+        base64encoder: Base64UrlEncoder
     ): Boolean = {
 
       val key = getPublicKey(secret)

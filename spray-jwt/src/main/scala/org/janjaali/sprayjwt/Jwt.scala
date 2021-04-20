@@ -4,7 +4,7 @@ import java.security.Security
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.janjaali.sprayjwt.algorithms.Algorithm
-import org.janjaali.sprayjwt.encoder.{Base64Decoder, Base64Encoder}
+import org.janjaali.sprayjwt.encoder.{Base64Decoder, Base64UrlEncoder}
 import org.janjaali.sprayjwt.exceptions.{
   InvalidJwtException,
   InvalidSignatureException
@@ -96,7 +96,7 @@ object Jwt {
       secret: String
   )(implicit
       serializer: JsonStringSerializer,
-      base64Encoder: Base64Encoder
+      base64Encoder: Base64UrlEncoder
   ): Jwt = {
 
     Jwt(
@@ -110,7 +110,7 @@ object Jwt {
       jwsPayload: JwsPayload
   )(implicit
       serializer: JsonStringSerializer,
-      base64Encoder: Base64Encoder
+      base64Encoder: Base64UrlEncoder
   ): Jwt = {
 
     val joseHeaderJsonBase64Encoded = {
@@ -242,7 +242,7 @@ object LegacyJwt {
     val algorithm = getAlgorithmFromHeader(header)
 
     implicit val serializeJson: JsonValue => String = ??? // new added
-    implicit val base64encoder: Base64Encoder = ??? // new added
+    implicit val base64encoder: Base64UrlEncoder = ??? // new added
 
     if (!algorithm.validate(signature, data, secret)) {
       throw new InvalidSignatureException()
@@ -271,12 +271,12 @@ object LegacyJwt {
 
     val encodedHeader = getEncodedHeader(algorithm)
     val encodedPayload =
-      Base64Encoder.encode(payloadWithReservedClaims.toString)
+      Base64UrlEncoder.encode(payloadWithReservedClaims.toString)
 
     val encodedData = s"$encodedHeader.$encodedPayload"
 
     implicit val serializeJson: JsonValue => String = ??? // new added
-    implicit val base64encoder: Base64Encoder = ??? // new added
+    implicit val base64encoder: Base64UrlEncoder = ??? // new added
 
     val signature = algorithm.sign(encodedData, secret)
     s"$encodedData.$signature"
@@ -290,7 +290,7 @@ object LegacyJwt {
 
   private def getEncodedHeader(algorithm: Algorithm): String = {
     val header = JwtHeader(algorithm).toJson.toString
-    Base64Encoder.encode(header)
+    Base64UrlEncoder.encode(header)
   }
 
   private def getReversedClaims(jwtClaims: JwtClaims): Map[String, JsValue] = {
