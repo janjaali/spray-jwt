@@ -24,6 +24,14 @@ object CommonJsonWriters {
       CommonJsonWriters.longJsonWriter
     }
 
+    /** Constructs JSON writer for Boolean types.
+      *
+      * @return JSON writer
+      */
+    implicit def booleanJsonWriter: JsonWriter[Boolean] = {
+      CommonJsonWriters.booleanJsonWriter
+    }
+
     /** Constructs JSON writer for String types.
       *
       * @return JSON writer
@@ -38,7 +46,11 @@ object CommonJsonWriters {
     * @return JSON writer
     */
   def intJsonWriter: JsonWriter[Int] = {
-    jsonNumberWriter[Int]
+    new JsonWriter[Int] {
+      override def write(value: Int): JsonValue = {
+        JsonNumber(BigDecimal(value))
+      }
+    }
   }
 
   /** Constructs JSON writer for Long types.
@@ -46,7 +58,23 @@ object CommonJsonWriters {
     * @return JSON writer
     */
   def longJsonWriter: JsonWriter[Long] = {
-    jsonNumberWriter[Long]
+    new JsonWriter[Long] {
+      override def write(value: Long): JsonValue = {
+        JsonNumber(value)
+      }
+    }
+  }
+
+  /** Constructs JSON writer for Boolean types.
+    *
+    * @return JSON writer
+    */
+  def booleanJsonWriter: JsonWriter[Boolean] = {
+    new JsonWriter[Boolean] {
+      override def write(value: Boolean): JsonValue = {
+        JsonBoolean(value)
+      }
+    }
   }
 
   /** Constructs JSON writer for String types.
@@ -72,18 +100,6 @@ object CommonJsonWriters {
       def write(product: P): JsonValue = {
         val valueWriter = implicitly[JsonWriter[T]]
         valueWriter.write(product.productElement(0).asInstanceOf[T])
-      }
-    }
-  }
-
-  /** Constructs JSON writer (i.e. JSON number) for numeric types.
-    *
-    * @return JSON writer
-    */
-  private def jsonNumberWriter[T: Numeric]: JsonWriter[T] = {
-    new JsonWriter[T] {
-      override def write(value: T): JsonValue = {
-        JsonNumber(value)
       }
     }
   }

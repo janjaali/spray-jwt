@@ -3,11 +3,13 @@ package org.janjaali.sprayjwt.encoder
 import java.util.Base64
 import org.janjaali.sprayjwt.json.{JsonStringSerializer, JsonValue}
 
-/** Base64Encoder utility class.
-  */
-private[sprayjwt] object Base64Encoder {
+// TODO: Remove JSON stuff out of here.
 
-  private lazy val base64Encoder: Base64.Encoder = Base64.getEncoder
+// TODO: Probably rename to Base64UrlEncoder.
+
+sealed trait Base64Encoder {
+
+  private lazy val base64Encoder: Base64.Encoder = Base64.getUrlEncoder
 
   /** Encodes text to a Base64 encoded String.
     *
@@ -19,20 +21,6 @@ private[sprayjwt] object Base64Encoder {
     encode(textAsByteArray)
   }
 
-  /** Encodes JSON value to a Base64 encoded String.
-    *
-    * @param jsonValue json value that should be encoded
-    * @param jsonStringSerializer Serializer that is used to serialize the json
-    *                             value to a String before Base64 encoding sets
-    *                             in
-    * @return Base64 encoded JSON value
-    */
-  def encode(
-      jsonValue: JsonValue
-  )(implicit jsonStringSerializer: JsonStringSerializer): String = {
-    jsonStringSerializer.serialize(jsonValue)
-  }
-
   /** Encodes a ByteArray as String.
     *
     * @param byteArray the ByteArray to encode as String
@@ -42,3 +30,7 @@ private[sprayjwt] object Base64Encoder {
     base64Encoder.encodeToString(byteArray).replaceAll("=", "")
   }
 }
+
+/** Base64Encoder utility class.
+  */
+private[sprayjwt] object Base64Encoder extends Base64Encoder // TODO: Check if needed

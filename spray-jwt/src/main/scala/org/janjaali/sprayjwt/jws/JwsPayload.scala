@@ -9,7 +9,7 @@ import org.janjaali.sprayjwt.jwt.JwtClaimsSet
   */
 final case class JwsPayload(claimsSet: JwtClaimsSet) {
 
-  /** JSON representation of this JWS payload.
+  /** JSON representation of this JWS Payload.
     *
     * @return JSON object
     */

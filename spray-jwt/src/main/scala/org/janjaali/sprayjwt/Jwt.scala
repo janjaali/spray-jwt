@@ -17,6 +17,7 @@ import scala.util.{Success, Try}
 import org.janjaali.sprayjwt.json._
 import org.janjaali.sprayjwt.jwt.JwtClaimsSet
 import org.janjaali.sprayjwt.jws.JwsPayload
+import org.bouncycastle.util.encoders
 
 /** TODO:
   */
@@ -79,7 +80,9 @@ private case class JoseHeader(algorithm: Algorithm) {
     JsonObject(
       Map(
         "typ" -> JsonString(this.typ),
-        "alg" -> JsonString("algorithm.name") // TODO: JSON Writer for JoseHeader needed
+        "alg" -> JsonString(
+          "algorithm.name"
+        ) // TODO: JSON Writer for JoseHeader needed
       )
     )
   }
@@ -91,7 +94,10 @@ object Jwt {
       claims: JwtClaimsSet,
       algorithm: Algorithm,
       secret: String
-  )(implicit jsonStringSerializer: JsonStringSerializer): Jwt = {
+  )(implicit
+      serializer: JsonStringSerializer,
+      base64Encoder: Base64Encoder
+  ): Jwt = {
 
     Jwt(
       joseHeader = JoseHeader(algorithm),
@@ -102,13 +108,26 @@ object Jwt {
   private def apply(
       joseHeader: JoseHeader,
       jwsPayload: JwsPayload
-  )(implicit jsonStringSerializer: JsonStringSerializer): Jwt = {
+  )(implicit
+      serializer: JsonStringSerializer,
+      base64Encoder: Base64Encoder
+  ): Jwt = {
 
-    val joseHeaderJson = joseHeader.asJson
-    val joseHeaderJsonBase64Encoded = Base64Encoder.encode(joseHeaderJson)
+    val joseHeaderJsonBase64Encoded = {
+      base64Encoder.encode {
+        serializer.serialize {
+          joseHeader.asJson
+        }
+      }
+    }
 
-    val jwsPayloadJson = jwsPayload.asJson
-    val jwsPayloadJsonBase64Encoded = Base64Encoder.encode(jwsPayloadJson)
+    val jwsPayloadJsonBase64Encoded = {
+      base64Encoder.encode {
+        serializer.serialize {
+          jwsPayload.asJson
+        }
+      }
+    }
 
     new Jwt(
       joseHeader = joseHeaderJsonBase64Encoded,
@@ -222,6 +241,9 @@ object LegacyJwt {
 
     val algorithm = getAlgorithmFromHeader(header)
 
+    implicit val serializeJson: JsonValue => String = ??? // new added
+    implicit val base64encoder: Base64Encoder = ??? // new added
+
     if (!algorithm.validate(signature, data, secret)) {
       throw new InvalidSignatureException()
     }
@@ -252,6 +274,9 @@ object LegacyJwt {
       Base64Encoder.encode(payloadWithReservedClaims.toString)
 
     val encodedData = s"$encodedHeader.$encodedPayload"
+
+    implicit val serializeJson: JsonValue => String = ??? // new added
+    implicit val base64encoder: Base64Encoder = ??? // new added
 
     val signature = algorithm.sign(encodedData, secret)
     s"$encodedData.$signature"

@@ -7,7 +7,9 @@ lazy val sprayJwt = (project in file("spray-jwt"))
     name := "spray-jwt",
     organization := "com.github.janjaali",
     version := "1.0.0",
-    licenses := Seq("MIT License" -> url("https://opensource.org/licenses/MIT")),
+    licenses := Seq(
+      "MIT License" -> url("https://opensource.org/licenses/MIT")
+    ),
     homepage := Some(url("https://github.com/janjaali/spray-jwt")),
     scmInfo := Some(
       ScmInfo(
@@ -35,30 +37,22 @@ lazy val sprayJwt = (project in file("spray-jwt"))
     },
     libraryDependencies ++= Seq(
       // JSON
-      "io.spray" %% "spray-json" % "1.3.3",
-
+      "io.spray" %% "spray-json" % "1.3.6",
       // Encryption
       "org.bouncycastle" % "bcpkix-jdk15on" % "1.58",
-
       // Test
       "org.scalatest" %% "scalatest" % "3.2.6" % Test,
-
       // Property based tests
       "org.scalacheck" %% "scalacheck" % "1.15.3" % Test,
       "org.scalatestplus" %% "scalacheck-1-15" % "3.2.6.0" % Test
     )
   )
 
-lazy val sprayJwtAkkaHttpTest = (project in file("spray-jwt-akka-http-test"))
-  .dependsOn(sprayJwt)
-  .settings(
-    name := "spray-jwt-akka-http-test",
+lazy val sprayJsonSupport = (project in file("spray-json-support"))
+  .dependsOn(sprayJwt % "test->test;compile->compile")
+  .settings {
     libraryDependencies ++= Seq(
-      "com.typesafe.akka" %% "akka-http" % "10.0.11",
-      "com.typesafe.akka" %% "akka-http-testkit" % "10.0.11" % Test,
-      "com.typesafe.akka" %% "akka-http-spray-json" % "10.0.11",
-
-      "com.typesafe.scala-logging" %% "scala-logging" % "3.8.0",
-      "ch.qos.logback" % "logback-classic" % "1.2.3"
+      // Supported JSON library
+      "io.spray" %% "spray-json" % "1.3.6"
     )
-  )
+  }

@@ -12,9 +12,11 @@ import org.janjaali.sprayjwt.json.JsonObject
 sealed abstract case class JoseHeader private (headers: Set[Header]) {
 
   def asJson: JsonObject = {
-    JsonObject(headers.map { header =>
-      header.name -> header.valueAsJson
-    }.toMap)
+    JsonObject(
+      headers.map { header =>
+        header.name -> header.valueAsJson
+      }.toMap
+    )
   }
 }
 
