@@ -3,7 +3,7 @@ package org.janjaali.sprayjwt.encoder
 import java.util.Base64
 
 /** Default Base64 URL encoder that uses internally the [[java.util.Base64]] URL
-  * encoder.
+  * encoder without padding.
   */
 private[sprayjwt] trait Base64UrlEncoder {
 

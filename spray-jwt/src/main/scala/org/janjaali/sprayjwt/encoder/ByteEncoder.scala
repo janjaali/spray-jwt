@@ -7,6 +7,8 @@ private[sprayjwt] object ByteEncoder {
 
   private val encodingCharset = "UTF-8"
 
+  // TODO: Check usage?
+
   /**
     * Encodes text into a byte array used UTF-8 charset.
     *

@@ -6,7 +6,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
 import org.bouncycastle.openssl.{PEMKeyPair, PEMParser}
 import org.janjaali.sprayjwt.encoder.{
-  Base64Decoder,
+  Base64UrlDecoder,
   Base64UrlEncoder,
   ByteEncoder
 }
@@ -36,39 +36,11 @@ sealed trait Algorithm {
       base64encoder: Base64UrlEncoder
   ): JwsSignature
 
-  /** Signs data. // TODO: legacy?
-    *
-    * @param data   the data to sign
-    * @param secret the secret to use for signing the data
-    * @return signed data
-    */
-  def sign(
-      data: String,
-      secret: String
-  )(implicit
-      serializer: JsonValue => String,
-      base64encoder: Base64UrlEncoder
-  ): String
-
-  // TODO: Check if serializer is needed
-  // TODO: Idea for new method signature
-  // def sign(jwsProtectedHeader: JwsProtectedHeader, jwsPayload: JwsPayload): JwsSignature
-
-  /** Validates signature. // TODO: legacy?
-    *
-    * @param signature the signature to validate
-    * @param data      the data to validate signature for
-    * @param secret    the secret to use for validation
-    * @return <code>true</code> if signature is valid, otherwise returns <code>false</code>
-    */
+  // TODO: Add docs.
   def validate(
-      signature: String,
       data: String,
-      secret: String
-  )(implicit
-      serializer: JsonValue => String,
-      base64encoder: Base64UrlEncoder
-  ): Boolean
+      secret: Secret
+  )(implicit base64UrlEncoder: Base64UrlEncoder): Boolean
 }
 
 /** Provides algorithms.
@@ -80,8 +52,6 @@ object Algorithm {
     */
   sealed trait Hmac extends Algorithm {
 
-    private val provider = "SunJCE" // TODO: Check if needed to create MAC's
-
     protected def hashingAlgorithmName: String
 
     override def sign(
@@ -90,16 +60,11 @@ object Algorithm {
         secret: Secret
     )(implicit
         serializeJson: JsonValue => String,
-        base64encoder: Base64UrlEncoder
+        base64UrlEncoder: Base64UrlEncoder
     ): JwsSignature = {
 
-      val mac = Mac.getInstance(hashingAlgorithmName, provider)
-      val key = new SecretKeySpec(secret.asByteArray, hashingAlgorithmName)
-
-      mac.init(key)
-
       val base64UrlEncodedJoseHeader = {
-        base64encoder.encode {
+        base64UrlEncoder.encode {
           serializeJson {
             joseHeader.asJson
           }
@@ -107,7 +72,7 @@ object Algorithm {
       }
 
       val base64UrlEncodedJwsPayload = {
-        base64encoder.encode {
+        base64UrlEncoder.encode {
           serializeJson {
             jwsPayload.asJson
           }
@@ -118,42 +83,44 @@ object Algorithm {
         s"$base64UrlEncodedJoseHeader.$base64UrlEncodedJwsPayload"
       }
 
-      val signature = mac.doFinal(inputToBeSigned.getBytes("UTF-8"))
-
-      JwsSignature(base64encoder.encode(signature))
+      sign(inputToBeSigned, secret)
     }
 
-    // TODO: Check implementation
-    override def sign(
-        data: String,
-        secret: String
-    )(implicit
-        serializeJson: JsonValue => String,
-        base64encoder: Base64UrlEncoder
-    ): String = {
-
-      val secretAsByteArray = ByteEncoder.getBytes(secret)
-      val secretKey = new SecretKeySpec(secretAsByteArray, hashingAlgorithmName)
-
-      val dataAsByteArray = ByteEncoder.getBytes(data)
-
-      val mac = Mac.getInstance(hashingAlgorithmName, provider)
-      mac.init(secretKey)
-      val signAsByteArray = mac.doFinal(dataAsByteArray)
-      base64encoder.encode(signAsByteArray)
-    }
-
-    // TODO: Check implementation
-    // TODO: Check if serializer is needed
     override def validate(
-        signature: String,
         data: String,
-        secret: String
-    )(implicit
-        serializeJson: JsonValue => String,
-        base64encoder: Base64UrlEncoder
-    ): Boolean = {
-      sign(data, secret) == signature
+        secret: Secret
+    )(implicit base64UrlEncoder: Base64UrlEncoder): Boolean = {
+
+      data.split("\\.") match {
+        case Array(
+              base64UrlEncodedJoseHeader,
+              base64UrlEncodedJwsPayload,
+              base64EncodedSignature
+            ) =>
+          val signedInput = {
+            s"$base64UrlEncodedJoseHeader.$base64UrlEncodedJwsPayload"
+          }
+
+          sign(signedInput, secret).value == base64EncodedSignature
+
+        case _ =>
+          false
+      }
+    }
+
+    private def sign(
+        data: String,
+        secret: Secret
+    )(implicit base64UrlEncoder: Base64UrlEncoder): JwsSignature = {
+
+      val mac = Mac.getInstance(hashingAlgorithmName)
+      val key = new SecretKeySpec(secret.asByteArray, hashingAlgorithmName)
+
+      mac.init(key)
+
+      val signature = mac.doFinal(data.getBytes("UTF-8"))
+
+      JwsSignature(base64UrlEncoder.encode(signature))
     }
   }
 
@@ -195,19 +162,19 @@ object Algorithm {
         secret: Secret
     )(implicit
         serializeJson: JsonValue => String,
-        base64encoder: Base64UrlEncoder
+        base64UrlEncoder: Base64UrlEncoder
     ): JwsSignature = {
 
       ???
     }
 
     // TODO: Check implementation
-    override def sign(
+    def sign(
         data: String,
         secret: String
     )(implicit
         serializeJson: JsonValue => String,
-        base64encoder: Base64UrlEncoder
+        base64UrlEncoder: Base64UrlEncoder
     ): String = {
 
       val key = getPrivateKey(secret)
@@ -218,17 +185,17 @@ object Algorithm {
       signature.initSign(key)
       signature.update(dataByteArray)
       val signatureByteArray = signature.sign
-      base64encoder.encode(signatureByteArray)
+      base64UrlEncoder.encode(signatureByteArray)
     }
 
     // TODO: Check implementation
-    override def validate(
+    def validate(
         signature: String,
         data: String,
         secret: String
     )(implicit
         serializeJson: JsonValue => String,
-        base64encoder: Base64UrlEncoder
+        base64UrlEncoder: Base64UrlEncoder
     ): Boolean = {
 
       val key = getPublicKey(secret)
@@ -238,7 +205,14 @@ object Algorithm {
       val rsaSignature = Signature.getInstance(hashingAlgorithmName, provider)
       rsaSignature.initVerify(key)
       rsaSignature.update(dataByteArray)
-      rsaSignature.verify(Base64Decoder.decode(signature))
+      rsaSignature.verify(Base64UrlDecoder.decode(signature))
+    }
+
+    override def validate(
+        data: String,
+        secret: Secret
+    )(implicit base64encoder: Base64UrlEncoder): Boolean = {
+      ???
     }
 
     private def getPublicKey(str: String): PublicKey = {
@@ -288,6 +262,33 @@ object Algorithm {
       */
     final case object Rs512 extends Rsa {
       override protected def hashingAlgorithmName: String = "SHA512withRSA"
+    }
+  }
+
+  def validate(
+      data: String,
+      secret: Secret // TODO: Do RSA algorithms use the same secret, probably not?
+  )(implicit
+      deserializeJson: String => JsonValue,
+      base64UrlDecoder: Base64UrlDecoder
+  ): Boolean = {
+
+    data.split("\\.") match {
+      case Array(
+            base64UrlEncodedJoseHeader,
+            base64UrlEncodedJwsPayload,
+            base64EncodedSignature
+          ) =>
+        val joseHeaderJson = deserializeJson {
+          base64UrlDecoder.decodeAsString {
+            base64UrlEncodedJoseHeader
+          }
+        }
+
+        ??? // TODO: Continue here!
+
+      case _ =>
+        false
     }
   }
 }

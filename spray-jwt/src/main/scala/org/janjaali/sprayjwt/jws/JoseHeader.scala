@@ -11,6 +11,7 @@ import org.janjaali.sprayjwt.json.JsonObject
   */
 sealed abstract case class JoseHeader private (headers: Set[Header]) {
 
+  // TODO: Doc.
   def asJson: JsonObject = {
     JsonObject(
       headers.map { header =>
@@ -20,6 +21,7 @@ sealed abstract case class JoseHeader private (headers: Set[Header]) {
   }
 }
 
+// TODO: Doc.
 object JoseHeader {
 
   /** Constructs a JOSE Header for a sequence of headers.
