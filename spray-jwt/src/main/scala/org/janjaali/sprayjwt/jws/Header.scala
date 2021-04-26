@@ -1,7 +1,7 @@
 package org.janjaali.sprayjwt.jws
 
 import org.janjaali.sprayjwt.algorithms
-import org.janjaali.sprayjwt.json.{JsonString, JsonValue, JsonWriter}
+import org.janjaali.sprayjwt.json._
 
 /** Represents a Header.
   */
@@ -48,15 +48,21 @@ object Header {
       value: algorithms.Algorithm
   ) extends Header {
 
-    override def name: String = "alg"
+    override def name: String = Algorithm.name
 
     override type T = algorithms.Algorithm
 
-    override protected def valueJsonWriter: JsonWriter[
-      algorithms.Algorithm
-    ] = {
-      new JsonWriter[algorithms.Algorithm] {
+    override protected def valueJsonWriter: JsonWriter[algorithms.Algorithm] = {
+      Algorithm.valueJsonWriter
+    }
+  }
 
+  object Algorithm {
+
+    val name: String = "alg"
+
+    private def valueJsonWriter: JsonWriter[algorithms.Algorithm] = {
+      new JsonWriter[algorithms.Algorithm] {
         override def write(algorithm: algorithms.Algorithm): JsonValue = {
           algorithm match {
             case algorithms.Algorithm.Rsa.Rs256  => JsonString("RS256")
@@ -69,6 +75,18 @@ object Header {
         }
       }
     }
+
+    private[Header] def apply(algorithmName: String): Option[Algorithm] = {
+      algorithmName match {
+        case "RS256" => Some(Algorithm(algorithms.Algorithm.Rsa.Rs256))
+        case "RS384" => Some(Algorithm(algorithms.Algorithm.Rsa.Rs384))
+        case "RS512" => Some(Algorithm(algorithms.Algorithm.Rsa.Rs512))
+        case "HS256" => Some(Algorithm(algorithms.Algorithm.Hmac.Hs256))
+        case "HS384" => Some(Algorithm(algorithms.Algorithm.Hmac.Hs384))
+        case "HS512" => Some(Algorithm(algorithms.Algorithm.Hmac.Hs512))
+        case _       => None
+      }
+    }
   }
 
   /** Declares the media type of the complete JWS.
@@ -79,25 +97,20 @@ object Header {
       value: Type.Value
   ) extends Header {
 
-    override def name: String = "typ"
+    override def name: String = Type.name
 
     override type T = Type.Value
 
     override protected def valueJsonWriter: JsonWriter[Type.Value] = {
-      new JsonWriter[Type.Value] {
-
-        override def write(value: Type.Value): JsonValue = {
-          value match {
-            case Type.Value.Jwt => JsonString("JWT")
-          }
-        }
-      }
+      Type.valueJsonWriter
     }
   }
 
   /** Provides type values.
     */
   object Type {
+
+    val name: String = "typ"
 
     sealed trait Value
 
@@ -106,6 +119,23 @@ object Header {
       /** Type value JWT.
         */
       case object Jwt extends Value
+    }
+
+    private def valueJsonWriter: JsonWriter[Type.Value] = {
+      new JsonWriter[Type.Value] {
+        override def write(value: Type.Value): JsonValue = {
+          value match {
+            case Type.Value.Jwt => JsonString("JWT")
+          }
+        }
+      }
+    }
+
+    private[Header] def apply(typeValue: String): Option[Type] = {
+      typeValue match {
+        case "JWT" => Some(Type(Type.Value.Jwt))
+        case _     => None
+      }
     }
   }
 
@@ -120,6 +150,23 @@ object Header {
 
     override protected def valueJsonWriter: JsonWriter[H] = {
       implicitly[JsonWriter[T]]
+    }
+  }
+
+  // TODO: Add docs.
+
+  def apply(name: String, value: JsonValue): Header = {
+
+    import CommonJsonWriters.Implicits.jsonValueJsonWriter
+
+    (name, value) match {
+      case (Algorithm.name, JsonString(algorithmName))
+          if Algorithm(algorithmName).isDefined =>
+        Algorithm(algorithmName).get
+      case (Type.name, JsonString(typeValue)) if Type(typeValue).isDefined =>
+        Type(typeValue).get
+      case (name, value) =>
+        Private(name, value)
     }
   }
 }

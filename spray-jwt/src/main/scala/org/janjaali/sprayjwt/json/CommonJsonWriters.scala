@@ -39,6 +39,14 @@ object CommonJsonWriters {
     implicit def stringJsonWriter: JsonWriter[String] = {
       CommonJsonWriters.stringJsonWriter
     }
+
+    /** Constructs JSON writer for JSON values.
+      *
+      * @return JSON writer
+      */
+    implicit def jsonValueJsonWriter: JsonWriter[JsonValue] = {
+      CommonJsonWriters.jsonValueJsonWriter
+    }
   }
 
   /** Constructs JSON writer for Int types.
@@ -101,6 +109,16 @@ object CommonJsonWriters {
         val valueWriter = implicitly[JsonWriter[T]]
         valueWriter.write(product.productElement(0).asInstanceOf[T])
       }
+    }
+  }
+
+  /** Constructs JSON writer for JSON values.
+    *
+    * @return JSON writer
+    */
+  def jsonValueJsonWriter = {
+    new JsonWriter[JsonValue] {
+      override def write(value: JsonValue): JsonValue = value
     }
   }
 }

@@ -15,6 +15,11 @@ import org.janjaali.sprayjwt.jws.{JoseHeader, JwsPayload, JwsSignature}
 
 import java.io.{IOException, StringReader}
 import java.security.{PrivateKey, PublicKey, Signature}
+import org.janjaali.sprayjwt.json.JsonObject
+import org.janjaali.sprayjwt.json.JsonString
+import org.janjaali.sprayjwt.json.JsonNumber
+import org.janjaali.sprayjwt.json.JsonBoolean
+import org.janjaali.sprayjwt.jws.Header
 
 /** Represents a cryptographic algorithm used with JWT.
   */
@@ -285,10 +290,13 @@ object Algorithm {
           }
         }
 
-        ??? // TODO: Continue here!
-
-      case _ =>
-        false
+        joseHeaderJson match {
+          case joseHeaderJson: JsonObject =>
+            val joseHeader = JoseHeader(joseHeaderJson)
+            ??? // TODO: Continue here
+          case _ => false
+        }
+      case _ => false
     }
   }
 }

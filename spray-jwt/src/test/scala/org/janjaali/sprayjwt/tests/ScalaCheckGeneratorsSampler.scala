@@ -19,3 +19,5 @@ trait ScalaCheckGeneratorsSampler {
     }
   }
 }
+
+object ScalaCheckGeneratorsSampler extends ScalaCheckGeneratorsSampler

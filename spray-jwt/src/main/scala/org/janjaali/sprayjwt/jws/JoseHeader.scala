@@ -2,6 +2,10 @@ package org.janjaali.sprayjwt.jws
 
 import org.janjaali.sprayjwt.util.CollectionsFactory
 import org.janjaali.sprayjwt.json.JsonObject
+import org.janjaali.sprayjwt.json.JsonValue
+import org.janjaali.sprayjwt.json.JsonString
+import org.janjaali.sprayjwt.json.JsonNumber
+import org.janjaali.sprayjwt.json.JsonBoolean
 
 /** Javascript Object Signing and Encryption (JOSE Header) that contains
   * the parameter that describes the cryptographic operations and
@@ -42,4 +46,19 @@ object JoseHeader {
 
     new JoseHeader(uniquelyNamedHeaders.toSet) {}
   }
+
+  def apply(
+      json: JsonObject
+  ): JoseHeader = {
+
+    val headers = {
+      json.members.map { case (name, value) =>
+        Header(name, value)
+      }.toList
+    }
+
+    JoseHeader(headers)
+  }
+
+  sealed trait DeserializationFailure
 }

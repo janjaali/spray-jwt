@@ -6,9 +6,7 @@ trait JsonStringSerializer {
 
   final object Implicits {
 
-    implicit def implicitSerialize(json: JsonValue): String = {
-      serialize(json)
-    }
+    implicit val implicitSerialize: JsonValue => String = serialize
   }
 
   def serialize(json: JsonValue): String
