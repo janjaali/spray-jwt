@@ -10,16 +10,11 @@ import org.janjaali.sprayjwt.encoder.{
   Base64UrlEncoder,
   ByteEncoder
 }
-import org.janjaali.sprayjwt.json.{JsonStringSerializer, JsonValue}
-import org.janjaali.sprayjwt.jws.{JoseHeader, JwsPayload, JwsSignature}
+import org.janjaali.sprayjwt.json._
+import org.janjaali.sprayjwt.jws.{Header, JoseHeader, JwsPayload, JwsSignature}
 
 import java.io.{IOException, StringReader}
 import java.security.{PrivateKey, PublicKey, Signature}
-import org.janjaali.sprayjwt.json.JsonObject
-import org.janjaali.sprayjwt.json.JsonString
-import org.janjaali.sprayjwt.json.JsonNumber
-import org.janjaali.sprayjwt.json.JsonBoolean
-import org.janjaali.sprayjwt.jws.Header
 
 /** Represents a cryptographic algorithm used with JWT.
   */
