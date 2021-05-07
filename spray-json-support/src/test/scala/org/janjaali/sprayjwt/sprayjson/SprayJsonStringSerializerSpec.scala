@@ -1,8 +1,7 @@
 package org.janjaali.sprayjwt.sprayjson
 
 import org.janjaali.sprayjwt.algorithms.{Algorithm, JsonStringSerializerSpec}
-import org.janjaali.sprayjwt.json.JsonValue
-import org.janjaali.sprayjwt.json.JsonStringSerializer
+import org.janjaali.sprayjwt.json.{JsonStringSerializer, JsonValue}
 
 final class SprayJsonStringSerializerSpec extends JsonStringSerializerSpec {
 
@@ -12,10 +11,6 @@ final class SprayJsonStringSerializerSpec extends JsonStringSerializerSpec {
 
   "SprayJsonStringSerializer" - {
 
-    verifySignWithHmac256Algorithm()
-
-    verifySignWithHmac384Algorithm()
-
-    verifySignWithHmac512Algorithm()
+    verifySignWithHmacAlgorithms()
   }
 }

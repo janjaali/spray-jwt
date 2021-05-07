@@ -23,6 +23,8 @@ object SprayJsonStringSerializer extends JsonStringSerializer {
         JsNumber(value)
       case JsonBoolean(value) =>
         JsBoolean(value)
+      case JsonNull =>
+        JsNull
     }
   }
 }

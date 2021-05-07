@@ -270,33 +270,52 @@ object Algorithm {
     }
   }
 
+  // TODO: Docs.
+  // TODO: Test.
   def validate(
       data: String,
-      secret: Secret // TODO: Do RSA algorithms use the same secret, probably not?
+      secret: Secret // TODO: Do RSA algorithms use the same kind of secret, probably not?
   )(implicit
       deserializeJson: String => JsonValue,
-      base64UrlDecoder: Base64UrlDecoder
+      base64UrlDecoder: Base64UrlDecoder,
+      base64UrlEncoder: Base64UrlEncoder
   ): Boolean = {
 
-    data.split("\\.") match {
-      case Array(
-            base64UrlEncodedJoseHeader,
-            base64UrlEncodedJwsPayload,
-            base64EncodedSignature
-          ) =>
-        val joseHeaderJson = deserializeJson {
-          base64UrlDecoder.decodeAsString {
-            base64UrlEncodedJoseHeader
+    val maybeAlgorithm = {
+      data.split("\\.") match {
+        case Array(
+              base64UrlEncodedJoseHeader,
+              base64UrlEncodedJwsPayload,
+              base64EncodedSignature
+            ) =>
+          val maybeJoseHeaderJsonObject = deserializeJson {
+            base64UrlDecoder.decodeAsString {
+              base64UrlEncodedJoseHeader
+            }
           }
-        }
 
-        joseHeaderJson match {
-          case joseHeaderJson: JsonObject =>
-            val joseHeader = JoseHeader(joseHeaderJson)
-            ??? // TODO: Continue here
-          case _ => false
-        }
-      case _ => false
+          maybeJoseHeaderJsonObject match {
+            case joseHeaderJsonObject: JsonObject =>
+              val joseHeader = JoseHeader(joseHeaderJsonObject)
+
+              joseHeader.headers.collectFirst {
+                case Header.Algorithm(algorithm) => algorithm
+              }
+            case _ =>
+              // TODO: Log.
+              None
+          }
+        case _ =>
+          // TODO: Log.
+          None
+      }
+    }
+
+    maybeAlgorithm match {
+      case Some(algorithm) =>
+        algorithm.validate(data, secret)
+      case None =>
+        false
     }
   }
 }

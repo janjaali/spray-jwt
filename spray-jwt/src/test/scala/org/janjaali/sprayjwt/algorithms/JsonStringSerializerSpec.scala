@@ -13,7 +13,16 @@ trait JsonStringSerializerSpec extends ScalaTestSpec {
 
   protected def jsonStringSerializer: JsonStringSerializer
 
-  protected def verifySignWithHmac256Algorithm(): Unit = {
+  protected def verifySignWithHmacAlgorithms(): Unit = {
+    
+    verifySignWithHmac256Algorithm()
+  
+    verifySignWithHmac384Algorithm()
+
+    verifySignWithHmac512Algorithm()
+  }
+
+  private def verifySignWithHmac256Algorithm(): Unit = {
 
     verifySignWithAlgorithm(
       algorithm = Algorithm.Hmac.Hs256,
@@ -23,7 +32,7 @@ trait JsonStringSerializerSpec extends ScalaTestSpec {
     )
   }
 
-  protected def verifySignWithHmac384Algorithm(): Unit = {
+  private def verifySignWithHmac384Algorithm(): Unit = {
 
     verifySignWithAlgorithm(
       algorithm = Algorithm.Hmac.Hs384,
@@ -33,7 +42,7 @@ trait JsonStringSerializerSpec extends ScalaTestSpec {
     )
   }
 
-  protected def verifySignWithHmac512Algorithm(): Unit = {
+  private def verifySignWithHmac512Algorithm(): Unit = {
 
     verifySignWithAlgorithm(
       algorithm = Algorithm.Hmac.Hs512,
