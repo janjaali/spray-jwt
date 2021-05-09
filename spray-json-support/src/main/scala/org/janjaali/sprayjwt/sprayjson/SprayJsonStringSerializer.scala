@@ -3,14 +3,13 @@ package org.janjaali.sprayjwt.sprayjson
 import org.janjaali.sprayjwt.json._
 import spray.json._
 
-object SprayJsonStringSerializer extends JsonStringSerializer {
+object SprayJsonStringSerializer extends JsonStringSerializer:
 
-  override def serialize(jsonValue: JsonValue): String = {
+  override def serialize(jsonValue: JsonValue): String =
     sprayJsonValue(jsonValue).compactPrint
-  }
 
-  private def sprayJsonValue(jsonValue: JsonValue): JsValue = {
-    jsonValue match {
+  private def sprayJsonValue(jsonValue: JsonValue): JsValue =
+    jsonValue match
       case JsonObject(members) =>
         JsObject(
           members.map { case (key, value) =>
@@ -25,6 +24,3 @@ object SprayJsonStringSerializer extends JsonStringSerializer {
         JsBoolean(value)
       case JsonNull =>
         JsNull
-    }
-  }
-}
