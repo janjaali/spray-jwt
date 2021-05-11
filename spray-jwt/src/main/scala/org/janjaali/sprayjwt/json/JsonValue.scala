@@ -13,4 +13,4 @@ final case class JsonNumber(value: BigDecimal) extends JsonValue
 
 final case class JsonBoolean(value: Boolean) extends JsonValue
 
-final case object JsonNull extends JsonValue
+case object JsonNull extends JsonValue

@@ -4,7 +4,7 @@ package org.janjaali.sprayjwt.json
 
 trait JsonStringDeserializer {
 
-  final object Implicits {
+  object Implicits {
 
     implicit val implicitDeserialize: String => JsonValue = deserialize
   }

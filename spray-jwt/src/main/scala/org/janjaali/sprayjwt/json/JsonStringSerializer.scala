@@ -4,7 +4,7 @@ package org.janjaali.sprayjwt.json
 
 trait JsonStringSerializer {
 
-  final object Implicits {
+  object Implicits {
 
     implicit val implicitSerialize: JsonValue => String = serialize
   }

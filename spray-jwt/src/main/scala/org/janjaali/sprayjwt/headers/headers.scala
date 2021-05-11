@@ -47,7 +47,7 @@ package object headers {
       json.asJsObject.getFields("alg", "typ") match {
         case Seq(JsString(alg), JsString(typ)) if typ == "JWT" =>
 
-          val maybeAlgorithm = alg match {
+          val maybeAlgorithm: Option[Algorithm] = alg match {
             case "HS256" => Some(Algorithm.Hmac.Hs256)
             case "HS384" => Some(Algorithm.Hmac.Hs384)
             case "HS512" => Some(Algorithm.Hmac.Hs512)

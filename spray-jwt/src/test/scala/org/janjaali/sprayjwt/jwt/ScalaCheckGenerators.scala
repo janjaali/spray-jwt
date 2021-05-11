@@ -34,7 +34,7 @@ object ScalaCheckGenerators {
     * @return generator for expiration time
     */
   def expirationTimeClaimGen: Gen[Claim.ExpirationTime] = {
-    numericDateGen.map(Claim.ExpirationTime)
+    numericDateGen.map(Claim.ExpirationTime.apply)
   }
 
   def privateClaimGen: Gen[Claim.Private[_]] = {

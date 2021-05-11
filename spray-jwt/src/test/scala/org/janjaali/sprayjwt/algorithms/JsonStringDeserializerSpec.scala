@@ -4,7 +4,7 @@ import org.janjaali.sprayjwt.encoder.{Base64UrlDecoder, Base64UrlEncoder}
 import org.janjaali.sprayjwt.json.{JsonStringDeserializer, JsonValue}
 import org.janjaali.sprayjwt.tests.ScalaTestSpec
 
-trait JsonStringDeserializerSpec extends ScalaTestSpec {
+trait JsonStringDeserializerSpec extends ScalaTestSpec:
 
   private implicit val base64UrlEncoder: Base64UrlEncoder = Base64UrlEncoder
 
@@ -12,17 +12,13 @@ trait JsonStringDeserializerSpec extends ScalaTestSpec {
 
   protected def jsonStringDeserializer: JsonStringDeserializer
 
-  protected def verifyValidationWithHmacAlgorithms(): Unit = {
-
+  protected def verifyValidationWithHmacAlgorithms(): Unit = 
     verifyValidationWithHmac256Algorithm()
-
     verifyValidationWithHmac384Algorithm()
-
     verifyValidationWithHmac512Algorithm()
-  }
+  
 
-  private def verifyValidationWithHmac256Algorithm(): Unit = {
-
+  private def verifyValidationWithHmac256Algorithm(): Unit = 
     verifyValidationWithHmacAlgorithm(
       algorithmName = "Hmac256",
       data = {
@@ -30,10 +26,8 @@ trait JsonStringDeserializerSpec extends ScalaTestSpec {
       },
       secret = Secret("secret value")
     )
-  }
 
-  private def verifyValidationWithHmac384Algorithm(): Unit = {
-
+  private def verifyValidationWithHmac384Algorithm(): Unit = 
     verifyValidationWithHmacAlgorithm(
       algorithmName = "Hmac384",
       data = {
@@ -41,10 +35,8 @@ trait JsonStringDeserializerSpec extends ScalaTestSpec {
       },
       secret = Secret("secret value")
     )
-  }
 
-  private def verifyValidationWithHmac512Algorithm(): Unit = {
-
+  private def verifyValidationWithHmac512Algorithm(): Unit = 
     verifyValidationWithHmacAlgorithm(
       algorithmName = "Hmac512",
       data = {
@@ -52,21 +44,16 @@ trait JsonStringDeserializerSpec extends ScalaTestSpec {
       },
       secret = Secret("secret value")
     )
-  }
 
   private def verifyValidationWithHmacAlgorithm(
       algorithmName: String,
       data: String,
       secret: Secret
-  ): Unit = {
-
+  ): Unit = 
     s"Verify deserializer with '$algorithmName'." in {
-
       Algorithm.validate(data, secret) shouldBe true
     }
-  }
 
-  private implicit def serializeJson: String => JsonValue = {
+  private implicit def serializeJson: String => JsonValue =
     jsonStringDeserializer.deserialize
-  }
-}
+  

@@ -9,6 +9,5 @@ final class SprayJsonStringDeserializerSpec extends JsonStringDeserializerSpec:
     SprayJsonStringDeserializer
 
   "SprayJsonStringDeserializer" - {
-
     verifyValidationWithHmacAlgorithms()
   }
