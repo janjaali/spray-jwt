@@ -1,26 +1,30 @@
 package org.janjaali.sprayjwt.sprayjson
 
-import org.janjaali.sprayjwt.json._
-import spray.json._
+import org.janjaali.sprayjwt.json.*
+import spray.json.*
 
+/** spray-json implementation of the JsonStringSerializer.
+  */
 object SprayJsonStringSerializer extends JsonStringSerializer:
 
   override def serialize(jsonValue: JsonValue): String =
-    sprayJsonValue(jsonValue).compactPrint
+    asJsValue(jsonValue).compactPrint
 
-  private def sprayJsonValue(jsonValue: JsonValue): JsValue =
+  private def asJsValue(jsonValue: JsonValue): JsValue =
     jsonValue match
       case JsonObject(members) =>
         JsObject(
           members.map { case (key, value) =>
-            key -> sprayJsonValue(value)
+            key -> asJsValue(value)
           }.toMap
         )
-      case JsonString(value) =>
-        JsString(value)
-      case JsonNumber(value) =>
-        JsNumber(value)
-      case JsonBoolean(value) =>
-        JsBoolean(value)
-      case JsonNull =>
-        JsNull
+
+      case JsonArray(elements) =>
+        JsArray(
+          elements.map(asJsValue).toVector
+        )
+
+      case JsonString(value)  => JsString(value)
+      case JsonNumber(value)  => JsNumber(value)
+      case JsonBoolean(value) => JsBoolean(value)
+      case JsonNull           => JsNull

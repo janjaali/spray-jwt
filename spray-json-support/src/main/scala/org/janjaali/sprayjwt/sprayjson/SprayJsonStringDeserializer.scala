@@ -1,8 +1,10 @@
 package org.janjaali.sprayjwt.sprayjson
 
-import org.janjaali.sprayjwt.json._
-import spray.json._
+import org.janjaali.sprayjwt.json.*
+import spray.json.*
 
+/** spray-json implementation of the JsonStringDeserializer.
+  */
 object SprayJsonStringDeserializer extends JsonStringDeserializer:
 
   override def deserialize(jsonText: String): JsonValue =
@@ -18,14 +20,9 @@ object SprayJsonStringDeserializer extends JsonStringDeserializer:
         )
 
       case JsArray(elements) =>
-        ???
+        JsonArray(elements.map(asJsonValue))
 
-      case JsString(value) =>
-        JsonString(value)
-
-      case JsNumber(value) =>
-        JsonNumber(value)
-
+      case JsString(value)      => JsonString(value)
+      case JsNumber(value)      => JsonNumber(value)
       case jsBoolean: JsBoolean => JsonBoolean(jsBoolean.value)
-
-      case JsNull => JsonNull
+      case JsNull               => JsonNull

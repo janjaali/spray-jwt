@@ -1,13 +1,16 @@
 package org.janjaali.sprayjwt.json
 
-// TODO: Docs.
+/** Provides a JSON string serializer.
+  */
+trait JsonStringSerializer:
 
-trait JsonStringSerializer {
+  /** Gives a JSON string serializer.
+    */
+  given stringSerializer: (JsonValue => String) with
+    def apply(json: JsonValue): String = serialize(json)
 
-  object Implicits {
-
-    implicit val implicitSerialize: JsonValue => String = serialize
-  }
-
+  /** Serializes a JSON value as a string.
+    *
+    * @param json JSON value that should be serialized
+    */
   def serialize(json: JsonValue): String
-}

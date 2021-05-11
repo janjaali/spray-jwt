@@ -1,7 +1,7 @@
 package org.janjaali.sprayjwt.sprayjson
 
-import org.janjaali.sprayjwt.algorithms.{Algorithm, JsonStringSerializerSpec}
-import org.janjaali.sprayjwt.json.{JsonStringSerializer, JsonValue}
+import org.janjaali.sprayjwt.algorithms.JsonStringSerializerSpec
+import org.janjaali.sprayjwt.json.JsonStringSerializer
 
 final class SprayJsonStringSerializerSpec extends JsonStringSerializerSpec:
 
