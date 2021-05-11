@@ -6,7 +6,7 @@ trait JsonStringSerializer:
 
   /** Gives a JSON string serializer.
     */
-  given stringSerializer: (JsonValue => String) with
+  given (JsonValue => String) with
     def apply(json: JsonValue): String = serialize(json)
 
   /** Serializes a JSON value as a string.

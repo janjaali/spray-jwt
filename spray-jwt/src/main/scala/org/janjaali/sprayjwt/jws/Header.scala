@@ -63,21 +63,20 @@ object Header {
 
     private def valueJsonWriter: JsonWriter[algorithms.Algorithm] = {
       new JsonWriter[algorithms.Algorithm] {
-        override def write(algorithm: algorithms.Algorithm): JsonValue = {
-          algorithm match {
+        override def write(algorithm: algorithms.Algorithm): JsonValue =
+          algorithm match
             case algorithms.Algorithm.Rsa.Rs256  => JsonString("RS256")
             case algorithms.Algorithm.Rsa.Rs384  => JsonString("RS384")
             case algorithms.Algorithm.Rsa.Rs512  => JsonString("RS512")
             case algorithms.Algorithm.Hmac.Hs256 => JsonString("HS256")
             case algorithms.Algorithm.Hmac.Hs384 => JsonString("HS384")
             case algorithms.Algorithm.Hmac.Hs512 => JsonString("HS512")
-          }
-        }
+
       }
     }
 
-    private[Header] def apply(algorithmName: String): Option[Algorithm] = {
-      algorithmName match {
+    private[Header] def apply(algorithmName: String): Option[Algorithm] =
+      algorithmName match
         case "RS256" => Some(Algorithm(algorithms.Algorithm.Rsa.Rs256))
         case "RS384" => Some(Algorithm(algorithms.Algorithm.Rsa.Rs384))
         case "RS512" => Some(Algorithm(algorithms.Algorithm.Rsa.Rs512))
@@ -85,8 +84,6 @@ object Header {
         case "HS384" => Some(Algorithm(algorithms.Algorithm.Hmac.Hs384))
         case "HS512" => Some(Algorithm(algorithms.Algorithm.Hmac.Hs512))
         case _       => None
-      }
-    }
   }
 
   /** Declares the media type of the complete JWS.

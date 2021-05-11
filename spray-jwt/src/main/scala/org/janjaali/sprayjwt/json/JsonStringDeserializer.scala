@@ -6,7 +6,7 @@ trait JsonStringDeserializer:
 
   /** Gives a JSON string deserializer.
     */
-  given stringDeserializer: (String => JsonValue) with
+  given (String => JsonValue) with
     def apply(jsonText: String): JsonValue = deserialize(jsonText)
 
   /** Deserializes a JSON string as JsonValue.

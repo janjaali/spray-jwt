@@ -7,58 +7,46 @@ import org.janjaali.sprayjwt.jws.{Header, JoseHeader, JwsPayload, JwsSignature}
 import org.janjaali.sprayjwt.jwt.{Claim, JwtClaimsSet, NumericDate}
 import org.janjaali.sprayjwt.tests.ScalaTestSpec
 
-trait JsonStringSerializerSpec extends ScalaTestSpec {
+trait JsonStringSerializerSpec extends ScalaTestSpec:
 
-  private implicit val base64UrlEncoder: Base64UrlEncoder = Base64UrlEncoder
+  private given Base64UrlEncoder = Base64UrlEncoder
 
-  protected def jsonStringSerializer: JsonStringSerializer
+  protected given jsonStringSerializer: JsonStringSerializer
 
-  protected def verifySignWithHmacAlgorithms(): Unit = {
-    
+  protected def verifySignWithHmacAlgorithms(): Unit =
     verifySignWithHmac256Algorithm()
-  
     verifySignWithHmac384Algorithm()
-
     verifySignWithHmac512Algorithm()
-  }
 
-  private def verifySignWithHmac256Algorithm(): Unit = {
-
+  private def verifySignWithHmac256Algorithm(): Unit =
     verifySignWithAlgorithm(
       algorithm = Algorithm.Hmac.Hs256,
       expectedSignature = JwsSignature(
         "jUzTJEnlFeTXDUPp9vJMwoalvXJ55IZ6DaBExN08UtA"
       )
     )
-  }
 
-  private def verifySignWithHmac384Algorithm(): Unit = {
-
+  private def verifySignWithHmac384Algorithm(): Unit =
     verifySignWithAlgorithm(
       algorithm = Algorithm.Hmac.Hs384,
       expectedSignature = JwsSignature(
         "tz6NV8IfhPNqEnfUgeu0TJowwvWsjcmFCiRC_F-7bTOQeUle8jomj151nYHx1-IQ"
       )
     )
-  }
 
-  private def verifySignWithHmac512Algorithm(): Unit = {
-
+  private def verifySignWithHmac512Algorithm(): Unit =
     verifySignWithAlgorithm(
       algorithm = Algorithm.Hmac.Hs512,
       expectedSignature = JwsSignature(
         "dOf7rSkv-y62jQDwAuzNdNKX2jfYK2HREBYqlB0rLnlERIlWkQ4BkVbbVyGi47br1Os4FllE4yjuz_FVjabK5w"
       )
     )
-  }
 
   private def verifySignWithAlgorithm(
       algorithm: Algorithm,
       expectedSignature: JwsSignature
-  ): Unit = {
-
+  ): Unit =
     s"Verify serializer with algorithm '${algorithm}'." in {
-
       val joseHeader = JoseHeader(
         Seq(
           Header.Type(Header.Type.Value.Jwt),
@@ -83,9 +71,3 @@ trait JsonStringSerializerSpec extends ScalaTestSpec {
 
       algorithm.sign(joseHeader, jwsPayload, secret) shouldBe expectedSignature
     }
-  }
-
-  private implicit def serializeJson: JsonValue => String = {
-    jsonStringSerializer.serialize
-  }
-}
