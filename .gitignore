@@ -1,4 +1,16 @@
-.idea
-
+# Build
 target
 project/target
+
+# IntelliJ
+.idea
+
+# VS Code
+.vscode
+
+# Metals
+.bloop
+.bsp
+.metals
+metals.sbt
+project/project
