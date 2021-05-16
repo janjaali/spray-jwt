@@ -1,22 +1,35 @@
 package org.janjaali.sprayjwt.algorithms
 
-import org.janjaali.sprayjwt.encoder.Base64UrlEncoder
+import org.janjaali.sprayjwt.encoder.{Base64UrlDecoder, Base64UrlEncoder}
 import org.janjaali.sprayjwt.json.CommonJsonWriters.Implicits._
-import org.janjaali.sprayjwt.json.{JsonStringSerializer, JsonValue}
+import org.janjaali.sprayjwt.json.{
+  JsonStringDeserializer,
+  JsonStringSerializer,
+  JsonValue
+}
 import org.janjaali.sprayjwt.jws.{Header, JoseHeader, JwsPayload, JwsSignature}
 import org.janjaali.sprayjwt.jwt.{Claim, JwtClaimsSet, NumericDate}
 import org.janjaali.sprayjwt.tests.ScalaTestSpec
 
-trait JsonStringSerializerSpec extends ScalaTestSpec:
+trait JsonSupportSpec extends ScalaTestSpec:
 
   private given Base64UrlEncoder = Base64UrlEncoder
 
+  private given Base64UrlDecoder = Base64UrlDecoder
+
   protected given jsonStringSerializer: JsonStringSerializer
+
+  protected given jsonStringDeserializer: JsonStringDeserializer
 
   protected def verifySignWithHmacAlgorithms(): Unit =
     verifySignWithHmac256Algorithm()
     verifySignWithHmac384Algorithm()
     verifySignWithHmac512Algorithm()
+
+  protected def verifyValidationWithHmacAlgorithms(): Unit =
+    verifyValidationWithHmac256Algorithm()
+    verifyValidationWithHmac384Algorithm()
+    verifyValidationWithHmac512Algorithm()
 
   private def verifySignWithHmac256Algorithm(): Unit =
     verifySignWithAlgorithm(
@@ -70,4 +83,40 @@ trait JsonStringSerializerSpec extends ScalaTestSpec:
       val secret = Secret("secret value")
 
       algorithm.sign(joseHeader, jwsPayload, secret) shouldBe expectedSignature
+    }
+
+  private def verifyValidationWithHmac256Algorithm(): Unit =
+    verifyValidationWithHmacAlgorithm(
+      algorithmName = "Hmac256",
+      data = {
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.eMS0OOcs-0Eo5x5vDepYOcITeG4NtPrtE8seTsT1RT0"
+      },
+      secret = Secret("secret value")
+    )
+
+  private def verifyValidationWithHmac384Algorithm(): Unit =
+    verifyValidationWithHmacAlgorithm(
+      algorithmName = "Hmac384",
+      data = {
+        "eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.tXvOFupOdp6ISki7ysqn_gO9LHk2n35d0f_E26d9FYfhLLHNudoWU2HXD_6Tnm7X"
+      },
+      secret = Secret("secret value")
+    )
+
+  private def verifyValidationWithHmac512Algorithm(): Unit =
+    verifyValidationWithHmacAlgorithm(
+      algorithmName = "Hmac512",
+      data = {
+        "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.mV13yTaWA-6cQWcQEmUOh2qaTnpF5hQpNNkIMY6RIlbyQQQ-MbE9zjQ19dTQpQ2hxEql5ObbmDmWzqx13ka6Iw",
+      },
+      secret = Secret("secret value")
+    )
+
+  private def verifyValidationWithHmacAlgorithm(
+      algorithmName: String,
+      data: String,
+      secret: Secret
+  ): Unit =
+    s"Verify deserializer with '$algorithmName'." in {
+      Algorithm.validate(data, secret) shouldBe true
     }

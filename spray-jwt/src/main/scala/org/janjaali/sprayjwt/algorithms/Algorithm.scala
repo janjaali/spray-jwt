@@ -227,8 +227,8 @@ object Algorithm:
   def validate(
       data: String,
       secret: Secret // TODO: Do RSA algorithms use the same kind of secret, probably not?
-  )(implicit
-      deserializeJson: String => JsonValue,
+  )(using
+      jsonStringDeserializer: JsonStringDeserializer,
       base64UrlDecoder: Base64UrlDecoder,
       base64UrlEncoder: Base64UrlEncoder
   ): Boolean = {
@@ -240,7 +240,7 @@ object Algorithm:
               base64UrlEncodedJwsPayload,
               base64EncodedSignature
             ) =>
-          val maybeJoseHeaderJsonObject = deserializeJson {
+          val maybeJoseHeaderJsonObject = jsonStringDeserializer.deserialize {
             base64UrlDecoder.decodeAsString {
               base64UrlEncodedJoseHeader
             }

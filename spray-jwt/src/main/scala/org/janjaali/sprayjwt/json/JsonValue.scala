@@ -11,11 +11,25 @@ sealed trait JsonValue
   */
 final case class JsonObject(members: Map[String, JsonValue]) extends JsonValue
 
+/** JSON object auxillary constructors and methods.
+ */
+object JsonObject:
+
+  /** Constructs an empty JSON object. */
+  lazy val empty: JsonObject = JsonObject(Map.empty)
+
 /** Represents a JSON array consisting of a set of elements (i.e. JSON values).
   * 
   * @param elements set of JSON values 
   */
 final case class JsonArray(elements: Seq[JsonValue]) extends JsonValue
+
+/** JSON array auxillary constructors and methods.
+ */
+object JsonArray:
+
+  /** Constructs an empty JSON object. */
+  lazy val empty: JsonArray = JsonArray(Seq.empty)
 
 /** Represents a JSON string.
   * 
