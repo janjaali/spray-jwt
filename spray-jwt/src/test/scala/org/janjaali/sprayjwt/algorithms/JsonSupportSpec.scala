@@ -13,10 +13,6 @@ import org.janjaali.sprayjwt.tests.ScalaTestSpec
 
 trait JsonSupportSpec extends ScalaTestSpec:
 
-  private given Base64UrlEncoder = Base64UrlEncoder
-
-  private given Base64UrlDecoder = Base64UrlDecoder
-
   protected given jsonStringSerializer: JsonStringSerializer
 
   protected given jsonStringDeserializer: JsonStringDeserializer

@@ -17,10 +17,8 @@ import java.io.{IOException, StringReader}
 import java.security.{PrivateKey, PublicKey, Signature}
 
 /** Represents a cryptographic algorithm used with JWT.
-  *
-  * @param base64UrlEncoder Base64 encoder that is used
   */
-sealed trait Algorithm(protected val base64UrlEncoder: Base64UrlEncoder):
+sealed trait Algorithm:
 
   /** Digitally signs the protected headers of the given Jose Header and the Jws
     * Payload.
@@ -58,12 +56,12 @@ object Algorithm:
         secret: Secret
     )(using jsonStringSerializer: JsonStringSerializer): JwsSignature =
       val base64UrlEncodedJoseHeader =
-        base64UrlEncoder.encode(
+        Base64UrlEncoder.encode(
           jsonStringSerializer.serialize(joseHeader.asJson)
         )
 
       val base64UrlEncodedJwsPayload =
-        base64UrlEncoder.encode(
+        Base64UrlEncoder.encode(
           jsonStringSerializer.serialize(jwsPayload.asJson)
         )
 
@@ -102,7 +100,7 @@ object Algorithm:
 
       val signature = mac.doFinal(data.getBytes("UTF-8"))
 
-      JwsSignature(base64UrlEncoder.encode(signature))
+      JwsSignature(Base64UrlEncoder.encode(signature))
 
   /** Provides HMAC algorithms.
     */
@@ -110,17 +108,17 @@ object Algorithm:
 
     /** HMAC using SHA-256.
       */
-    case object Hs256 extends Algorithm(Base64UrlEncoder), Hmac:
+    case object Hs256 extends Hmac:
       override val hashingAlgorithmName = "HMACSHA256"
 
     /** HMAC using SHA-384.
       */
-    case object Hs384 extends Algorithm(Base64UrlEncoder), Hmac:
+    case object Hs384 extends Hmac:
       override val hashingAlgorithmName = "HMACSHA384"
 
     /** HMAC using SHA-512.
       */
-    case object Hs512 extends Algorithm(Base64UrlEncoder), Hmac:
+    case object Hs512 extends Hmac:
       override val hashingAlgorithmName = "HMACSHA512"
 
   /** RSASSA-PKCS1-v1_5 (RSA) based algorithm using SHA-2 hash functions to sign
@@ -152,7 +150,7 @@ object Algorithm:
       signature.initSign(key)
       signature.update(dataByteArray)
       val signatureByteArray = signature.sign
-      base64UrlEncoder.encode(signatureByteArray)
+      Base64UrlEncoder.encode(signatureByteArray)
     }
 
     // TODO: Check implementation
@@ -209,17 +207,17 @@ object Algorithm:
 
     /** RSASSA-PKCS1-v1_5 using SHA-256.
       */
-    case object Rs256 extends Algorithm(Base64UrlEncoder), Rsa:
+    case object Rs256 extends Rsa:
       override protected def hashingAlgorithmName: String = "SHA256withRSA"
 
     /** RSASSA-PKCS1-v1_5 using SHA-384.
       */
-    case object Rs384 extends Algorithm(Base64UrlEncoder), Rsa:
+    case object Rs384 extends Rsa:
       override protected def hashingAlgorithmName: String = "SHA384withRSA"
 
     /** RSASSA-PKCS1-v1_5 using SHA-512.
       */
-    case object Rs512 extends Algorithm(Base64UrlEncoder), Rsa:
+    case object Rs512 extends Rsa:
       override protected def hashingAlgorithmName: String = "SHA512withRSA"
 
   // TODO: Docs.
@@ -227,21 +225,17 @@ object Algorithm:
   def validate(
       data: String,
       secret: Secret // TODO: Do RSA algorithms use the same kind of secret, probably not?
-  )(using
-      jsonStringDeserializer: JsonStringDeserializer,
-      base64UrlDecoder: Base64UrlDecoder,
-      base64UrlEncoder: Base64UrlEncoder
-  ): Boolean = {
+  )(using jsonStringDeserializer: JsonStringDeserializer): Boolean = {
 
     val maybeAlgorithm = {
-      data.split("\\.") match {
+      data.split("\\.") match
         case Array(
               base64UrlEncodedJoseHeader,
               base64UrlEncodedJwsPayload,
               base64EncodedSignature
             ) =>
           val maybeJoseHeaderJsonObject = jsonStringDeserializer.deserialize {
-            base64UrlDecoder.decodeAsString {
+            Base64UrlDecoder.decodeAsString {
               base64UrlEncodedJoseHeader
             }
           }
@@ -260,7 +254,6 @@ object Algorithm:
         case _ =>
           // TODO: Log.
           None
-      }
     }
 
     maybeAlgorithm match {
