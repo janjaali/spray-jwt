@@ -1,6 +1,7 @@
 package org.janjaali.sprayjwt.jws
 
 import org.janjaali.sprayjwt.algorithms
+import org.janjaali.sprayjwt.algorithms.Algorithms
 import org.janjaali.sprayjwt.json.CommonJsonWriters.Implicits.jsonValueJsonWriter
 import org.janjaali.sprayjwt.json.{JsonBoolean, JsonString, JsonValue}
 import org.janjaali.sprayjwt.tests.ScalaCheckGeneratorsSampler._
@@ -48,7 +49,7 @@ class HeaderSpec extends ScalaTestSpec with ScalaCheckDrivenPropertyChecks {
 
           behave like createAlgorithmHeader(
             value = JsonString("RS256"),
-            expectedHeader = Header.Algorithm(algorithms.Algorithm.Rsa.Rs256)
+            expectedHeader = Header.Algorithm(Algorithms.Rs256)
           )
         }
 
@@ -56,7 +57,7 @@ class HeaderSpec extends ScalaTestSpec with ScalaCheckDrivenPropertyChecks {
 
           behave like createAlgorithmHeader(
             value = JsonString("RS384"),
-            expectedHeader = Header.Algorithm(algorithms.Algorithm.Rsa.Rs384)
+            expectedHeader = Header.Algorithm(Algorithms.Rs384)
           )
         }
 
@@ -64,7 +65,7 @@ class HeaderSpec extends ScalaTestSpec with ScalaCheckDrivenPropertyChecks {
 
           behave like createAlgorithmHeader(
             value = JsonString("RS512"),
-            expectedHeader = Header.Algorithm(algorithms.Algorithm.Rsa.Rs512)
+            expectedHeader = Header.Algorithm(Algorithms.Rs512)
           )
         }
 
@@ -72,7 +73,7 @@ class HeaderSpec extends ScalaTestSpec with ScalaCheckDrivenPropertyChecks {
 
           behave like createAlgorithmHeader(
             value = JsonString("HS256"),
-            expectedHeader = Header.Algorithm(algorithms.Algorithm.Hmac.Hs256)
+            expectedHeader = Header.Algorithm(Algorithms.Hs256)
           )
         }
 
@@ -80,7 +81,7 @@ class HeaderSpec extends ScalaTestSpec with ScalaCheckDrivenPropertyChecks {
 
           behave like createAlgorithmHeader(
             value = JsonString("HS384"),
-            expectedHeader = Header.Algorithm(algorithms.Algorithm.Hmac.Hs384)
+            expectedHeader = Header.Algorithm(Algorithms.Hs384)
           )
         }
 
@@ -88,7 +89,7 @@ class HeaderSpec extends ScalaTestSpec with ScalaCheckDrivenPropertyChecks {
 
           behave like createAlgorithmHeader(
             value = JsonString("HS512"),
-            expectedHeader = Header.Algorithm(algorithms.Algorithm.Hmac.Hs512)
+            expectedHeader = Header.Algorithm(Algorithms.Hs512)
           )
         }
 

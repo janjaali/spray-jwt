@@ -29,7 +29,7 @@ trait JsonSupportSpec extends ScalaTestSpec:
 
   private def verifySignWithHmac256Algorithm(): Unit =
     verifySignWithAlgorithm(
-      algorithm = Algorithm.Hmac.Hs256,
+      algorithm = Algorithms.Hs256,
       expectedSignature = JwsSignature(
         "jUzTJEnlFeTXDUPp9vJMwoalvXJ55IZ6DaBExN08UtA"
       )
@@ -37,7 +37,7 @@ trait JsonSupportSpec extends ScalaTestSpec:
 
   private def verifySignWithHmac384Algorithm(): Unit =
     verifySignWithAlgorithm(
-      algorithm = Algorithm.Hmac.Hs384,
+      algorithm = Algorithms.Hs384,
       expectedSignature = JwsSignature(
         "tz6NV8IfhPNqEnfUgeu0TJowwvWsjcmFCiRC_F-7bTOQeUle8jomj151nYHx1-IQ"
       )
@@ -45,7 +45,7 @@ trait JsonSupportSpec extends ScalaTestSpec:
 
   private def verifySignWithHmac512Algorithm(): Unit =
     verifySignWithAlgorithm(
-      algorithm = Algorithm.Hmac.Hs512,
+      algorithm = Algorithms.Hs512,
       expectedSignature = JwsSignature(
         "dOf7rSkv-y62jQDwAuzNdNKX2jfYK2HREBYqlB0rLnlERIlWkQ4BkVbbVyGi47br1Os4FllE4yjuz_FVjabK5w"
       )
@@ -114,5 +114,5 @@ trait JsonSupportSpec extends ScalaTestSpec:
       secret: Secret
   ): Unit =
     s"Verify deserializer with '$algorithmName'." in {
-      Algorithm.validate(data, secret) shouldBe true
+      Algorithms.validate(data, secret) shouldBe true
     }

@@ -21,7 +21,7 @@ import java.security.{PrivateKey, PublicKey, Signature}
 sealed trait Algorithm:
 
   /** Digitally signs the protected headers of the given Jose Header and the Jws
-    * Payload.
+    * Payload with a given secret.
     *
     * @param joseHeader jose header
     * @param jwsPayload jws payload
@@ -33,15 +33,13 @@ sealed trait Algorithm:
       secret: Secret
   )(using jsonStringSerializer: JsonStringSerializer): JwsSignature
 
-  // TODO: Add docs.
-  def validate(
-      data: String,
-      secret: Secret
-  ): Boolean
+  /** Validates a given JWT token.
+    */
+  def validate(data: String, secret: Secret): Boolean
 
 /** Algorithms.
   */
-object Algorithm:
+object Algorithms:
 
   /** Hash-based Message Authentication Codes (HMACs) algorithm to sign and
     * validate digital signatures.
@@ -73,9 +71,8 @@ object Algorithm:
     override def validate(
         data: String,
         secret: Secret
-    ): Boolean = {
-
-      data.split("\\.") match {
+    ): Boolean =
+      data.split("\\.") match
         case Array(
               base64UrlEncodedJoseHeader,
               base64UrlEncodedJwsPayload,
@@ -87,10 +84,7 @@ object Algorithm:
 
           sign(signedInput, secret).value == base64EncodedSignature
 
-        case _ =>
-          false
-      }
-    }
+        case _ => false
 
     private def sign(data: String, secret: Secret): JwsSignature =
       val mac = Mac.getInstance(hashingAlgorithmName)
@@ -101,25 +95,6 @@ object Algorithm:
       val signature = mac.doFinal(data.getBytes("UTF-8"))
 
       JwsSignature(Base64UrlEncoder.encode(signature))
-
-  /** Provides HMAC algorithms.
-    */
-  object Hmac:
-
-    /** HMAC using SHA-256.
-      */
-    case object Hs256 extends Hmac:
-      override val hashingAlgorithmName = "HMACSHA256"
-
-    /** HMAC using SHA-384.
-      */
-    case object Hs384 extends Hmac:
-      override val hashingAlgorithmName = "HMACSHA384"
-
-    /** HMAC using SHA-512.
-      */
-    case object Hs512 extends Hmac:
-      override val hashingAlgorithmName = "HMACSHA512"
 
   /** RSASSA-PKCS1-v1_5 (RSA) based algorithm using SHA-2 hash functions to sign
     * and validate digital signatures.
@@ -135,6 +110,8 @@ object Algorithm:
         jwsPayload: JwsPayload,
         secret: Secret
     )(using jsonStringSerializer: JsonStringSerializer): JwsSignature = ???
+
+    override def validate(data: String, secret: Secret): Boolean = ???
 
     // TODO: Check implementation
     def sign(
@@ -173,8 +150,6 @@ object Algorithm:
       rsaSignature.verify(Base64UrlDecoder.decode(signature))
     }
 
-    override def validate(data: String, secret: Secret): Boolean = ???
-
     private def getPublicKey(str: String): PublicKey = {
       val pemParser = new PEMParser(new StringReader(str))
       val keyPair = pemParser.readObject()
@@ -201,27 +176,39 @@ object Algorithm:
       }
     }
 
-  /** Provides RSA algorithms.
+  /** HMAC using SHA-256.
     */
-  object Rsa: // TODO: Rename
+  case object Hs256 extends Hmac:
+    override val hashingAlgorithmName = "HMACSHA256"
 
-    /** RSASSA-PKCS1-v1_5 using SHA-256.
-      */
-    case object Rs256 extends Rsa:
-      override protected def hashingAlgorithmName: String = "SHA256withRSA"
+  /** HMAC using SHA-384.
+    */
+  case object Hs384 extends Hmac:
+    override val hashingAlgorithmName = "HMACSHA384"
 
-    /** RSASSA-PKCS1-v1_5 using SHA-384.
-      */
-    case object Rs384 extends Rsa:
-      override protected def hashingAlgorithmName: String = "SHA384withRSA"
+  /** HMAC using SHA-512.
+    */
+  case object Hs512 extends Hmac:
+    override val hashingAlgorithmName = "HMACSHA512"
 
-    /** RSASSA-PKCS1-v1_5 using SHA-512.
-      */
-    case object Rs512 extends Rsa:
-      override protected def hashingAlgorithmName: String = "SHA512withRSA"
+  /** RSASSA-PKCS1-v1_5 using SHA-256.
+    */
+  case object Rs256 extends Rsa:
+    override protected def hashingAlgorithmName: String = "SHA256withRSA"
+
+  /** RSASSA-PKCS1-v1_5 using SHA-384.
+    */
+  case object Rs384 extends Rsa:
+    override protected def hashingAlgorithmName: String = "SHA384withRSA"
+
+  /** RSASSA-PKCS1-v1_5 using SHA-512.
+    */
+  case object Rs512 extends Rsa:
+    override protected def hashingAlgorithmName: String = "SHA512withRSA"
 
   // TODO: Docs.
   // TODO: Test.
+  // TODO: Move to the right place.
   def validate(
       data: String,
       secret: Secret // TODO: Do RSA algorithms use the same kind of secret, probably not?
